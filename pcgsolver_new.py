@@ -5,6 +5,7 @@ from scipy.sparse import *
 from scipy import *
 import sys
 import pdb
+from scipy.io import mmread, mmwrite
 
 def generatePreconditioner(A, hw):
     P = np.zeros( (3, 2 * hw), dtype='float32' )
@@ -60,8 +61,20 @@ def pcg(D, x, b, P, maxIters=15):
 
     return cx
 
-
-
+def outputMatrixandVector(mat, vec):
+  with open('matrix.txt', 'wb') as f:
+    width, height = mat.shape
+    for i in xrange(width):
+      for j in xrange(height):
+        value = mat.item((i,j))
+        if value != 0.0:
+          f.write(str(i) + ' ' + str(j) + ' ' + str(value) + '\n')
+  
+  with open('vector.txt', 'wb') as f:
+    height = vec.size
+    for i in xrange(height):
+      f.write(vec[height] + '\n')
+      
 if __name__ == "__main__":
     
     print("This is a package")
@@ -75,6 +88,8 @@ if __name__ == "__main__":
     height = np.fromfile(f, np.int32, 1)[0]
     
     A = np.fromfile(f, np.float32, width*height*12)
+    b = np.fromfile(f, np.float32, width*height*2)
+    
     Ar = np.reshape(A, (6,2*height*width))
     D_data = np.zeros( (7,2*height*width), dtype='float32' )
 
@@ -88,7 +103,6 @@ if __name__ == "__main__":
     D_data[6,width::] = Ar[5,0:-width]
     D_offset = np.array([-width*height, 0, width*height, -width, -1, 1, width])
     D = dia_matrix( (D_data, D_offset), shape=(2*width*height,2*width*height))
-    b = np.fromfile(f, np.float32, width*height*2)
     f.close()
     
 #    np.savez('test', D=D,b=b,width=width,height=height)
@@ -105,8 +119,16 @@ if __name__ == "__main__":
     b = np.reshape(b, (D.shape[0],), np.float32)
     x = np.zeros(b.shape, np.float32)
     P = generatePreconditioner(D_data, height*width)
+    
+    print D.shape
+    print x.shape
+    print b.shape
+    print P.shape
+    b2 = csr_matrix(b)
+#    mmwrite('matrix.txt', D)
+#    mmwrite('vector.txt', b2)
     y = pcg(D,x,b,P)
-
+    
     elapsed = time.time() - start
     print elapsed
 
