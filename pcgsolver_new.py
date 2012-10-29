@@ -124,11 +124,10 @@ if __name__ == "__main__":
     print x.shape
     print b.shape
     print P.shape
-    b2 = csr_matrix(b)
+#    b2 = csr_matrix(b)
 #    mmwrite('matrix.txt', D)
 #    mmwrite('vector.txt', b2)
     y = pcg(D,x,b,P)
-    
     elapsed = time.time() - start
     print elapsed
 
