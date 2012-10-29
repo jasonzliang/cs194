@@ -27,10 +27,10 @@ public class ConjugateGradientSolver {
 		//   rsold=rsnew;
 		Vector r = b.vectorSubtraction(x.matrixVectorMultiplication(A));
 		Vector p = r.clone();
-		double rsold = r.norm();
+		float rsold = r.norm();
 		Vector Ap;
-		double alpha;
-		double rsnew;
+		float alpha;
+		float rsnew;
 		for (int i=0; i<1000; i++) {
 			Ap = p.matrixVectorMultiplication(A);
 			alpha = rsold / (p.dotProduct(Ap));
