@@ -1,38 +1,21 @@
 """
 Compares output of both solvers.
 
-Assumes input of this format - one float on each line:
-0.3343
-0.343
-0.34343
-..
+Assumes input is of Matrix Market (mtx) format
 
 """
 import sys
+from scipy.io import mmread, mmwrite
+import numpy
 
-def compare_output(file1, file2, threshold=0.0001):
-    f1 = open(file1,'r')
-    f2 = open(file2, 'r')
 
-    try:
-        while True:
-            l1 = f1.readline().replace("\n","")
-            l2 = f2.readline().replace("\n","")
+def compare_output(file1, file2, rtol=1.0000000000000001e-05, atol=1e-08):
+    m1 = mmread(file1)
+    m2 = mmread(file2)
 
-            if l1 == "" or l2 == "":
-                break
-            
-            diff = abs(float(l1) - float(l2))
-            if diff > threshold:
-                print "Mismatch: %s, %s; Differ by %f" % (l1, l2, diff)
-
-    except Exception as e:
-        print e
-        f1.close()
-        f2.close()
-    finally:
-        f1.close()
-        f2.close()
+    # absolute(a - b) <= (atol + rtol * absolute(b))
+    return numpy.allclose(m1.toarray(), m2.toarray(), rtol=rtol, atol = atol)
+    
 
 if __name__ == "__main__":
     if len(sys.argv) < 3:
