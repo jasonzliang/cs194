@@ -1,5 +1,4 @@
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
@@ -22,11 +21,16 @@ public class Test {
 		                   {-1.0f, 2.0f, -1.0f}, 
 		                   {0.0f, -1.0f, 2.0f} };
 		float bVal[] = { 0.0f, 0.0f, 4.0f };
-		Matrix A = new Matrix(aVal);
+		Matrix A = new Matrix(3, 3);
+		for (int i=0; i<aVal.length; i++) {
+			for (int j=0; j<aVal[0].length; j++) {
+				A.setValue(i, j, aVal[i][j]);
+			}
+		}
 		Vector b = new Vector(bVal);
 		System.out.println(ConjugateGradientSolver.solve(A, b));
 
-		//Test.readMatrixFile("matrix.txt.mtx");
+		Test.readMatrixFile("matrix.txt.mtx");
 		Test.readVectorFile("vector.txt.mtx");
 	}
 
