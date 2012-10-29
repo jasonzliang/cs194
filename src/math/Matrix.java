@@ -1,7 +1,9 @@
 package math;
 
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.locks.Lock;
 
 public class Matrix {
@@ -34,6 +36,10 @@ public class Matrix {
 		} else {
 			return 0.0f;
 		}
+	}
+
+	public Set<Integer> getNonZeroRowIndecies(int row) {
+		return matrixValues[row].keySet();
 	}
 
 	// needs to be locked on i!

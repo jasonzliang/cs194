@@ -54,7 +54,7 @@ public class Vector {
 		float temp;
 		for (int i=0; i<m.getM(); i++) {
 			temp = 0.0f;
-			for (int j=0; j<getSize(); j++) {
+			for (int j : m.getNonZeroRowIndecies(i)) {
 				temp += getValue(j) * m.getValue(i, j);
 			}
 			result.setValue(i, temp);

@@ -31,7 +31,9 @@ public class Test {
 		System.out.println(ConjugateGradientSolver.solve(A, b));
 
 		A = Test.readMatrixFile("matrix.txt.mtx");
+		System.out.println("Got the matrix");
 		b = Test.readVectorFile("vector.txt.mtx");
+		System.out.println("Got the vector");
 
 		Vector solution = ConjugateGradientSolver.solve(A, b);
 	}
