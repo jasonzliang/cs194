@@ -1,117 +1,48 @@
 package math;
 
-public class Vector {
-	private float vectorValues[] = null;
+public interface Vector {
+	public Vector clone();
 
-	/**
-	 * Creates a zero vector of the given <code>size</code>
-	 * @param size
-	 */
-	public Vector(int size) {
-		vectorValues = new float[size];
-	}
+	public int getSize();
 
-	/**
-	 * Creates a vector with the given <code>values</code>.
-	 * This creates a <strong>deep copy</strong>, which means the input
-	 * <code>values</code> array will not be mutated.
-	 * @param values
-	 */
-	public Vector(float values[]) {
-		this.vectorValues = new float[values.length];
-		for (int i=0; i<values.length; i++) {
-			this.vectorValues[i] = values[i];
-		}
-	}
+	public float getValue(int index);
 
-	public Vector clone() {
-		return new Vector(vectorValues);
-	}
-
-	public int getSize() {
-		return vectorValues.length;
-	}
-
-	public float getValue(int index) {
-		return vectorValues[index];
-	}
-
-	public void setValue(int index, float value) {
-		vectorValues[index] = value;
-	}
+	public void setValue(int index, float value);
 
 	/**
 	 * @param m the matrix from <code>m</code>*(this vector)
 	 * @return a new vector with the result of <code>m</code>*(this vector)
 	 */
-	public Vector matrixVectorMultiplication(Matrix m) {
-		if (m.getN() != getSize()) {
-			throw new IllegalArgumentException("The matrix's width (N) must "
-					+ "be the same as this vector's size");
-		}
-		Vector result = new Vector(m.getM());
-		// result[i] = sum_j(this[j] * m[i][j])
-		float temp;
-		for (int i=0; i<m.getM(); i++) {
-			temp = 0.0f;
-			for (int j : m.getNonZeroRowIndecies(i)) {
-				temp += getValue(j) * m.getValue(i, j);
-			}
-			result.setValue(i, temp);
-		}
-		return result;
-	}
+	public Vector matrixVectorMultiplication(Matrix m);
 
 	/**
 	 * @param v
 	 * @return the scalar dot product
 	 */
-	public float dotProduct(Vector v) {
-		verifyVectorSizesMatch(this, v);
-		float dotProduct = 0.0f;
-		for (int i=0; i<getSize(); i++) {
-			dotProduct += this.getValue(i) * v.getValue(i);
-		}
-		return dotProduct;
-	}
+	public float dotProduct(Vector v);
 
 	/**
 	 * @return the sum of the squares of the elements of this vector
 	 */
-	public float norm() {
-		return dotProduct(this);
-	}
+	public float norm();
 
 	/**
 	 * @param v the vector to add
 	 * @return a new vector that is the result of (this vector)+<code>v</code>
 	 */
-	public Vector vectorAddition(Vector v) {
-		Vector result = new Vector(vectorValues);
-		result.add(v);
-		return result;
-	}
+	public Vector vectorAddition(Vector v);
 
 	/**
 	 * @param v the vector to add
 	 * @return a new vector that is the result of (this vector)-<code>v</code>
 	 */
-	public Vector vectorSubtraction(Vector v) {
-		Vector result = new Vector(vectorValues);
-		result.subtract(v);
-		return result;
-	}
+	public Vector vectorSubtraction(Vector v);
 
 	/**
 	 * Mutates this vector by adding <code>v</code> to it
 	 * @param v the vector to add
 	 */
-	public void add(Vector v) {
-		verifyVectorSizesMatch(this, v);
-		for (int i=0; i<getSize(); i++) {
-			setValue(i, this.getValue(i) + v.getValue(i));
-		}
-	}
+	public void add(Vector v);
 
 	/**
 	 * Mutates this vector by subtracting <code>v</code> from it.<br>
@@ -119,51 +50,17 @@ public class Vector {
 	 * (this vector) = (this vector) - v
 	 * @param v the vector to subtract
 	 */
-	public void subtract(Vector v) {
-		verifyVectorSizesMatch(this, v);
-		for (int i=0; i<getSize(); i++) {
-			setValue(i, this.getValue(i) - v.getValue(i));
-		}
-	}
+	public void subtract(Vector v);
 
 	/**
 	 * @param s the scalar value to multiply by
 	 * @return a new vector that is s * (this vector)
 	 */
-	public Vector scalarMultiplication(float s) {
-		Vector result = new Vector(vectorValues);
-		result.multiply(s);
-		return result;
-	}
+	public Vector scalarMultiplication(float s);
 
 	/**
 	 * Mutates this vector by multiply each element by <code>s</code>
 	 * @param s the scalar to multiply by
 	 */
-	public void multiply(float s) {
-		for (int i=0; i<getSize(); i++) {
-			setValue(i, s * getValue(i));
-		}
-	}
-
-	public String toString() {
-		StringBuilder s = new StringBuilder();
-		s.append("[");
-		boolean addComma = false;
-		for (float val : vectorValues) {
-			if (addComma) {
-				s.append(", ");
-			}
-			s.append(val);
-			addComma = true;
-		}
-		s.append("]");
-		return s.toString();
-	}
-
-	private void verifyVectorSizesMatch(Vector v1, Vector v2) {
-		if (v1.getSize() != v2.getSize()) {
-			throw new IllegalArgumentException("The vectors must be of the same size");
-		}
-	}
+	public void multiply(float s);
 }

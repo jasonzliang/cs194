@@ -2,8 +2,10 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
+import math.ArrayVector;
 import math.ConjugateGradientSolver;
 import math.Matrix;
+import math.MappedVector;
 import math.Vector;
 
 
@@ -27,7 +29,7 @@ public class Test {
 				A.setValue(i, j, aVal[i][j]);
 			}
 		}
-		Vector b = new Vector(bVal);
+		Vector b = new ArrayVector(bVal);
 		System.out.println(ConjugateGradientSolver.solve(A, b));
 
 		A = Test.readMatrixFile("matrix.txt.mtx");
@@ -76,7 +78,7 @@ public class Test {
 			if (v == null) {
 				// this should only happen for the first line of content, which
 				// tells us the vector
-				v = new Vector(Integer.parseInt(temp[1]) + 1);
+				v = new ArrayVector(Integer.parseInt(temp[1]) + 1);
 				continue;
 			}
 			// this is an entry
