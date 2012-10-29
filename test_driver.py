@@ -1,5 +1,11 @@
 """
 Compares output of both solvers.
+Usage:
+python test_driver.py file1.mtx file2.mtx [1.000-e05] [1e-08]
+                                            rtol        atol
+
+Returns  absolute(a - b) <= (atol + rtol * absolute(b))
+
 
 Assumes input is of Matrix Market (mtx) format
 
@@ -22,14 +28,16 @@ if __name__ == "__main__":
         print "Please specify input files"
         exit()
   
-    threshold = 0
+    rtol = 1.0000000000000001e-05
+    atol = 1e-08
 
     file1 = sys.argv[1]
     file2 = sys.argv[2]
     
-    if len(sys.argv) == 4:
-        threshold = float(sys.argv[3])
+    if len(sys.argv) == 5:
+        rtol = float(sys.argv[3])
+        atol = float(sys.argv[4])
 
     print "Comparing %s and %s" % (file1, file2)
-    compare_output(file1, file2, threshold=threshold)
+    compare_output(file1, file2, rtol=rtol, atol=atol)
     
