@@ -8,7 +8,7 @@ public class ArrayVector implements Vector {
 	 * @param size
 	 */
 	public ArrayVector(int size) {
-		vectorValues = new float[size];
+		vectorValues = new float[size + 1];
 	}
 
 	/**
@@ -31,7 +31,7 @@ public class ArrayVector implements Vector {
 
 	@Override
 	public int getSize() {
-		return vectorValues.length;
+		return vectorValues.length - 1;
 	}
 
 	@Override

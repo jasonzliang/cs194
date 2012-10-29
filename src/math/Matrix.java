@@ -11,13 +11,13 @@ public class Matrix {
 	private Lock lock[];
 
 	public Matrix(int m, int n) {
-		matrixValues = (Hashtable<Integer, Float>[]) new Hashtable[m];
-		for (int i=0; i<m; i++) {
+		matrixValues = (Hashtable<Integer, Float>[]) new Hashtable[m + 1];
+		for (int i=0; i<m + 1; i++) {
 			matrixValues[i] = new Hashtable<Integer, Float>();
 		}
 		this.m = m;
 		this.n = n;
-		lock = new Lock[m];
+		lock = new Lock[m + 1];
 	}
 
 	public int getM() {
