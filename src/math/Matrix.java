@@ -2,10 +2,12 @@ package math;
 
 import java.util.Hashtable;
 import java.util.Map;
+import java.util.concurrent.locks.Lock;
 
 public class Matrix {
 	private Map<Integer, Float> matrixValues[] = null;
 	private int m, n;
+	private Lock lock[];
 
 	public Matrix(int m, int n) {
 		matrixValues = (Hashtable<Integer, Float>[]) new Hashtable[m];
@@ -14,6 +16,7 @@ public class Matrix {
 		}
 		this.m = m;
 		this.n = n;
+		lock = new Lock[m];
 	}
 
 	public int getM() {
@@ -24,10 +27,16 @@ public class Matrix {
 		return n;
 	}
 
+	// needs to be locked on i!
 	public float getValue(int i, int j) {
-		return matrixValues[i].get(j);
+		if (matrixValues[i].get(j) != null) {
+			return matrixValues[i].get(j);
+		} else {
+			return 0.0f;
+		}
 	}
 
+	// needs to be locked on i!
 	public void setValue(int i, int j, float value) {
 		matrixValues[i].put(j, value);
 	}

@@ -8,10 +8,10 @@ public class ConjugateGradientSolver {
 	 * @return
 	 */
 	public static Vector solve(Matrix A, Vector b) {
-		return solve(A, b, new Vector(b.getSize()));
+		return solve(A, b, new Vector(b.getSize()), 15);
 	}
 
-	public static Vector solve(Matrix A, Vector b, Vector x) {
+	public static Vector solve(Matrix A, Vector b, Vector x, int maxIters) {
 		// r=b-A*x;
 		// p=r;
 		// rsold=r'*r;
@@ -31,7 +31,7 @@ public class ConjugateGradientSolver {
 		Vector Ap;
 		float alpha;
 		float rsnew;
-		for (int i=0; i<1000; i++) {
+		for (int i=0; i<maxIters; i++) {
 			Ap = p.matrixVectorMultiplication(A);
 			alpha = rsold / (p.dotProduct(Ap));
 			x.add(p.scalarMultiplication(alpha));

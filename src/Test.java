@@ -30,8 +30,10 @@ public class Test {
 		Vector b = new Vector(bVal);
 		System.out.println(ConjugateGradientSolver.solve(A, b));
 
-		Test.readMatrixFile("matrix.txt.mtx");
-		Test.readVectorFile("vector.txt.mtx");
+		A = Test.readMatrixFile("matrix.txt.mtx");
+		b = Test.readVectorFile("vector.txt.mtx");
+
+		Vector solution = ConjugateGradientSolver.solve(A, b);
 	}
 
 	public static Matrix readMatrixFile(String fileName) throws IOException {
@@ -56,7 +58,7 @@ public class Test {
 		               Integer.parseInt(temp[1]),
                        Float.parseFloat(temp[2]));
 		}
-		return null;
+		return m;
 	}
 
 	public static Vector readVectorFile(String fileName) throws IOException {
