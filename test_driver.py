@@ -1,52 +1,43 @@
 """
 Compares output of both solvers.
+Usage:
+python test_driver.py file1.mtx file2.mtx [1.000-e05] [1e-08]
+                                            rtol        atol
 
-Assumes input of this format - one float on each line:
-0.3343
-0.343
-0.34343
-..
+Returns  absolute(a - b) <= (atol + rtol * absolute(b))
+
+
+Assumes input is of Matrix Market (mtx) format
 
 """
 import sys
+from scipy.io import mmread, mmwrite
+import numpy
 
-def compare_output(file1, file2, threshold=0.0001):
-    f1 = open(file1,'r')
-    f2 = open(file2, 'r')
 
-    try:
-        while True:
-            l1 = f1.readline().replace("\n","")
-            l2 = f2.readline().replace("\n","")
+def compare_output(file1, file2, rtol=1.0000000000000001e-05, atol=1e-08):
+    m1 = mmread(file1)
+    m2 = mmread(file2)
 
-            if l1 == "" or l2 == "":
-                break
-            
-            diff = abs(float(l1) - float(l2))
-            if diff > threshold:
-                print "Mismatch: %s, %s; Differ by %f" % (l1, l2, diff)
-
-    except Exception as e:
-        print e
-        f1.close()
-        f2.close()
-    finally:
-        f1.close()
-        f2.close()
+    # absolute(a - b) <= (atol + rtol * absolute(b))
+    return numpy.allclose(m1.toarray(), m2.toarray(), rtol=rtol, atol = atol)
+    
 
 if __name__ == "__main__":
     if len(sys.argv) < 3:
         print "Please specify input files"
         exit()
   
-    threshold = 0
+    rtol = 1.0000000000000001e-05
+    atol = 1e-08
 
     file1 = sys.argv[1]
     file2 = sys.argv[2]
     
-    if len(sys.argv) == 4:
-        threshold = float(sys.argv[3])
+    if len(sys.argv) == 5:
+        rtol = float(sys.argv[3])
+        atol = float(sys.argv[4])
 
     print "Comparing %s and %s" % (file1, file2)
-    compare_output(file1, file2, threshold=threshold)
+    compare_output(file1, file2, rtol=rtol, atol=atol)
     
