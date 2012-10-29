@@ -1,35 +1,34 @@
 package math;
 
+import java.util.List;
+
 public class Matrix {
-	double matrixValues[][] = null;
+	private List<Float> matrixValues[] = null;
+	private int m, n;
 
 	public Matrix(int m, int n) {
-		matrixValues = new double[m][n];
-	}
-
-	public Matrix(double values[][]) {
-		matrixValues = new double[values.length][values[0].length];
-		for (int i=0; i<values.length; i++) {
-			for (int j=0; j<values[0].length; j++) {
-				matrixValues[i][j] = values[i][j];
-			}
+		matrixValues = (java.util.Vector<Float>[]) new java.util.Vector[m];
+		for (int i=0; i<m; i++) {
+			matrixValues[i] = new java.util.Vector<Float>(n);
 		}
+		this.m = m;
+		this.n = n;
 	}
 
 	public int getM() {
-		return matrixValues.length;
+		return m;
 	}
 
 	public int getN() {
-		return matrixValues[0].length;
+		return n;
 	}
 
-	public double getValue(int i, int j) {
-		return matrixValues[i][j];
+	public float getValue(int i, int j) {
+		return matrixValues[i].get(j);
 	}
 
-	public void setValue(int i, int j, double value) {
-		matrixValues[i][j] = value;
+	public void setValue(int i, int j, float value) {
+		matrixValues[i].add(j, value);
 	}
 
 }

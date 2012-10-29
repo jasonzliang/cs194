@@ -1,14 +1,14 @@
 package math;
 
 public class Vector {
-	private double vectorValues[] = null;
+	private float vectorValues[] = null;
 
 	/**
 	 * Creates a zero vector of the given <code>size</code>
 	 * @param size
 	 */
 	public Vector(int size) {
-		vectorValues = new double[size];
+		vectorValues = new float[size];
 	}
 
 	/**
@@ -17,8 +17,8 @@ public class Vector {
 	 * <code>values</code> array will not be mutated.
 	 * @param values
 	 */
-	public Vector(double values[]) {
-		this.vectorValues = new double[values.length];
+	public Vector(float values[]) {
+		this.vectorValues = new float[values.length];
 		for (int i=0; i<values.length; i++) {
 			this.vectorValues[i] = values[i];
 		}
@@ -32,11 +32,11 @@ public class Vector {
 		return vectorValues.length;
 	}
 
-	public double getValue(int index) {
+	public float getValue(int index) {
 		return vectorValues[index];
 	}
 
-	public void setValue(int index, double value) {
+	public void setValue(int index, float value) {
 		vectorValues[index] = value;
 	}
 
@@ -51,9 +51,9 @@ public class Vector {
 		}
 		Vector result = new Vector(m.getM());
 		// result[i] = sum_j(this[j] * m[i][j])
-		double temp;
+		float temp;
 		for (int i=0; i<m.getM(); i++) {
-			temp = 0.0;
+			temp = 0.0f;
 			for (int j=0; j<getSize(); j++) {
 				temp += getValue(j) * m.getValue(i, j);
 			}
@@ -66,9 +66,9 @@ public class Vector {
 	 * @param v
 	 * @return the scalar dot product
 	 */
-	public double dotProduct(Vector v) {
+	public float dotProduct(Vector v) {
 		verifyVectorSizesMatch(this, v);
-		double dotProduct = 0.0;
+		float dotProduct = 0.0f;
 		for (int i=0; i<getSize(); i++) {
 			dotProduct += this.getValue(i) * v.getValue(i);
 		}
@@ -78,7 +78,7 @@ public class Vector {
 	/**
 	 * @return the sum of the squares of the elements of this vector
 	 */
-	public double norm() {
+	public float norm() {
 		return dotProduct(this);
 	}
 
@@ -130,7 +130,7 @@ public class Vector {
 	 * @param s the scalar value to multiply by
 	 * @return a new vector that is s * (this vector)
 	 */
-	public Vector scalarMultiplication(double s) {
+	public Vector scalarMultiplication(float s) {
 		Vector result = new Vector(vectorValues);
 		result.multiply(s);
 		return result;
@@ -140,7 +140,7 @@ public class Vector {
 	 * Mutates this vector by multiply each element by <code>s</code>
 	 * @param s the scalar to multiply by
 	 */
-	public void multiply(double s) {
+	public void multiply(float s) {
 		for (int i=0; i<getSize(); i++) {
 			setValue(i, s * getValue(i));
 		}
@@ -150,7 +150,7 @@ public class Vector {
 		StringBuilder s = new StringBuilder();
 		s.append("[");
 		boolean addComma = false;
-		for (double val : vectorValues) {
+		for (float val : vectorValues) {
 			if (addComma) {
 				s.append(", ");
 			}
