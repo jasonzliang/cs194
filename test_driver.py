@@ -39,5 +39,8 @@ if __name__ == "__main__":
         atol = float(sys.argv[4])
 
     print "Comparing %s and %s" % (file1, file2)
-    compare_output(file1, file2, rtol=rtol, atol=atol)
+    if compare_output(file1, file2, rtol=rtol, atol=atol):
+        print "OK"
+    else:
+        print "Fail"
     

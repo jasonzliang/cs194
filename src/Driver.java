@@ -107,6 +107,8 @@ public class Driver {
 			}
 		}
 		BufferedWriter out = new BufferedWriter(new FileWriter(fileName));
+		out.write("%%MatrixMarket matrix coordinate real general");
+		out.write("%");
 		out.write("1 " + v.getSize() + " " + numEntries);
 		out.newLine();
 		for (int i=0; i<v.getSize(); i++) {

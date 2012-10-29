@@ -129,8 +129,8 @@ if __name__ == "__main__":
 #    mmwrite('vector.txt', b2)
     y = pcg(D,x,b,P)
     
-#    output = csr_matrix(y)
-#    mmwrite('output.txt', output)
+    output = csr_matrix(y)
+    mmwrite('output.txt', output)
     elapsed = time.time() - start
     print elapsed
 
