@@ -1,15 +1,16 @@
 package math;
 
-import java.util.List;
+import java.util.Hashtable;
+import java.util.Map;
 
 public class Matrix {
-	private List<Float> matrixValues[] = null;
+	private Map<Integer, Float> matrixValues[] = null;
 	private int m, n;
 
 	public Matrix(int m, int n) {
-		matrixValues = (java.util.Vector<Float>[]) new java.util.Vector[m];
+		matrixValues = (Hashtable<Integer, Float>[]) new Hashtable[m];
 		for (int i=0; i<m; i++) {
-			matrixValues[i] = new java.util.Vector<Float>(n);
+			matrixValues[i] = new Hashtable<Integer, Float>();
 		}
 		this.m = m;
 		this.n = n;
@@ -28,7 +29,7 @@ public class Matrix {
 	}
 
 	public void setValue(int i, int j, float value) {
-		matrixValues[i].add(j, value);
+		matrixValues[i].put(j, value);
 	}
 
 }
