@@ -75,36 +75,35 @@ def outputMatrixandVector(mat, vec):
     for i in xrange(height):
       f.write(vec[height] + '\n')
       
-if __name__ == "__main__":
-    
-    print("This is a package")
-    print("Running tests...")
-    if(len(sys.argv) < 1):
-        print("Data file not given")
-        exit()
+def run():
+  print("This is a package")
+  print("Running tests...")
+  if(len(sys.argv) < 1):
+      print("Data file not given")
+      exit()
 
-    f = open("Urban331.dat", "rb")
-    width = np.fromfile(f, np.int32, 1)[0]
-    height = np.fromfile(f, np.int32, 1)[0]
-    
-    A = np.fromfile(f, np.float32, width*height*12)
-    b = np.fromfile(f, np.float32, width*height*2)
-    
-    Ar = np.reshape(A, (6,2*height*width))
-    D_data = np.zeros( (7,2*height*width), dtype='float32' )
+  f = open("Urban331.dat", "rb")
+  width = np.fromfile(f, np.int32, 1)[0]
+  height = np.fromfile(f, np.int32, 1)[0]
+  
+  A = np.fromfile(f, np.float32, width*height*12)
+  b = np.fromfile(f, np.float32, width*height*2)
+  
+  Ar = np.reshape(A, (6,2*height*width))
+  D_data = np.zeros( (7,2*height*width), dtype='float32' )
 
-    D_data[1,0:width*height] = Ar[0,0:width*height]
-    D_data[0,0:width*height] = Ar[0,width*height::]
-    D_data[2,width*height::] = Ar[1,0:width*height]
-    D_data[1,width*height::] = Ar[1,width*height::]
-    D_data[3,0:-width] = Ar[2,width::]
-    D_data[4,0:-1] = Ar[3,1::]
-    D_data[5,1::] = Ar[4,0:-1]
-    D_data[6,width::] = Ar[5,0:-width]
-    D_offset = np.array([-width*height, 0, width*height, -width, -1, 1, width])
-    D = dia_matrix( (D_data, D_offset), shape=(2*width*height,2*width*height))
-    f.close()
-    
+  D_data[1,0:width*height] = Ar[0,0:width*height]
+  D_data[0,0:width*height] = Ar[0,width*height::]
+  D_data[2,width*height::] = Ar[1,0:width*height]
+  D_data[1,width*height::] = Ar[1,width*height::]
+  D_data[3,0:-width] = Ar[2,width::]
+  D_data[4,0:-1] = Ar[3,1::]
+  D_data[5,1::] = Ar[4,0:-1]
+  D_data[6,width::] = Ar[5,0:-width]
+  D_offset = np.array([-width*height, 0, width*height, -width, -1, 1, width])
+  D = dia_matrix( (D_data, D_offset), shape=(2*width*height,2*width*height))
+  f.close()
+  
 #    np.savez('test', D=D,b=b,width=width,height=height)
 #    foo = np.load('test.npz')
 #    D = foo['D']
@@ -113,25 +112,29 @@ if __name__ == "__main__":
 #    height = int32(foo['height'])
 #    import code; code.interact(local=locals())
 
-    import time
-    start = time.time()
+  import time
+  start = time.time()
 
-    b = np.reshape(b, (D.shape[0],), np.float32)
-    x = np.zeros(b.shape, np.float32)
-    P = generatePreconditioner(D_data, height*width)
-    
-    print D.shape
-    print x.shape
-    print b.shape
-    print P.shape
-    b2 = csr_matrix(b)
-    mmwrite('matrix.txt', D)
+  b = np.reshape(b, (D.shape[0],), np.float32)
+  x = np.zeros(b.shape, np.float32)
+  P = generatePreconditioner(D_data, height*width)
+  
+#    print D.shape
+#    print x.shape
+#    print b.shape
+#    print P.shape
+#    b2 = csr_matrix(b)
+#    mmwrite('matrix.txt', D)
 #    mmwrite('vector.txt', b2)
-    y = pcg(D,x,b,P)
-    
-#    output = csr_matrix(y)
-#    mmwrite('output.txt', output)
-    elapsed = time.time() - start
-    print elapsed
+  y = pcg(D,x,b,P)
+  elapsed = time.time() - start
+  
+  output = csr_matrix(y)
+  mmwrite('python_solution.txt', output)
+  return elapsed
+  
+if __name__ == "__main__":
+  run()
+
 
 

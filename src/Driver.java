@@ -36,12 +36,17 @@ public class Driver {
 		*/
 		
 		Matrix A = Driver.readMatrixFile("matrix.txt.mtx");
-		System.out.println("Got the matrix");
+//		System.out.println("Got the matrix");
 		Vector b = Driver.readVectorFile("vector.txt.mtx");
-		System.out.println("Got the vector");
-
+//		System.out.println("Got the vector");
+		
+		long start = System.currentTimeMillis();
 		Vector solution = ConjugateGradientSolver.solve(A, b);
-
+		
+		double time = ((double) (System.currentTimeMillis() - start))/1000;
+		
+		System.out.println(time);
+		
 		String fileName = "java_solution.txt.mtx";
 		if (args.length > 0) {
 			fileName = args[0] + ".txt.mtx";
@@ -107,11 +112,15 @@ public class Driver {
 			}
 		}
 		BufferedWriter out = new BufferedWriter(new FileWriter(fileName));
+		out.write("%%MatrixMarket matrix coordinate real general");
+		out.newLine();
+		out.write("%");
+		out.newLine();
 		out.write("1 " + v.getSize() + " " + numEntries);
 		out.newLine();
 		for (int i=0; i<v.getSize(); i++) {
 			if (v.getValue(i) != 0.0f) {
-				out.write("1 " + i + " " + v.getValue(i));
+				out.write("1 " + (i+1) + " " + v.getValue(i));
 				out.newLine();
 			}
 		}

@@ -11,8 +11,10 @@ Assumes input is of Matrix Market (mtx) format
 
 """
 import sys
+import os
 from scipy.io import mmread, mmwrite
 import numpy
+import pcgsolver_new
 
 
 def compare_output(file1, file2, rtol=1.0000000000000001e-05, atol=1e-08):
@@ -24,20 +26,28 @@ def compare_output(file1, file2, rtol=1.0000000000000001e-05, atol=1e-08):
     
 
 if __name__ == "__main__":
-    if len(sys.argv) < 3:
-        print "Please specify input files"
-        exit()
+#    if len(sys.argv) < 3:
+#        print "Please specify input files"
+#        exit()
   
     rtol = 1.0000000000000001e-05
     atol = 1e-08
-
-    file1 = sys.argv[1]
-    file2 = sys.argv[2]
+    pythontime = pcgsolver_new.run()
+    os.system('java -cp bin/ Driver > javatime.txt')
+    f = open('javatime.txt', 'rb')
+    javatime = float(f.readline().rstrip())
+    os.system('rm javatime.txt')
     
-    if len(sys.argv) == 5:
-        rtol = float(sys.argv[3])
-        atol = float(sys.argv[4])
+    print "Python Time: ", pythontime
+    print "Java Time: ", javatime
+    
+    if compare_output('python_solution.txt.mtx', 'java_solution.txt.mtx', rtol, atol):
+      print "Output Matches!"
+    else:
+      print "Output Mismatch!"
+    
+#    if len(sys.argv) == 5:
+#        rtol = float(sys.argv[3])
+#        atol = float(sys.argv[4])
 
-    print "Comparing %s and %s" % (file1, file2)
-    compare_output(file1, file2, rtol=rtol, atol=atol)
     
