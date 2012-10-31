@@ -1,14 +1,21 @@
 package math;
 
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 public class ArrayVector implements Vector {
 	private float vectorValues[] = null;
+	private MatrixVectorMultiplier multiplier[] = null;
+	ExecutorService executor = null;
 
 	/**
 	 * Creates a zero vector of the given <code>size</code>
 	 * @param size
 	 */
 	public ArrayVector(int size) {
-		vectorValues = new float[size + 1];
+		vectorValues = new float[size];
+		prepareParallel();
 	}
 
 	/**
@@ -22,6 +29,13 @@ public class ArrayVector implements Vector {
 		for (int i=0; i<values.length; i++) {
 			this.vectorValues[i] = values[i];
 		}
+		prepareParallel();
+	}
+
+	private void prepareParallel() {
+		int numProcessors = Runtime.getRuntime().availableProcessors() * 2;
+		multiplier = new MatrixVectorMultiplier[numProcessors];
+		executor = Executors.newFixedThreadPool(numProcessors);
 	}
 
 	@Override
@@ -31,7 +45,7 @@ public class ArrayVector implements Vector {
 
 	@Override
 	public int getSize() {
-		return vectorValues.length - 1;
+		return vectorValues.length;
 	}
 
 	@Override
@@ -50,16 +64,39 @@ public class ArrayVector implements Vector {
 			throw new IllegalArgumentException("The matrix's width (N) must "
 					+ "be the same as this vector's size");
 		}
-		ArrayVector result = new ArrayVector(m.getM());
+		ArrayVector result = new ArrayVector(getSize());
 		// result[i] = sum_j(this[j] * m[i][j])
-		float temp;
-		for (int i=0; i<m.getM(); i++) {
-			temp = 0.0f;
-			for (int j : m.getNonZeroRowIndecies(i)) {
-				temp += getValue(j) * m.getValue(i, j);
+		boolean multithread = false; // doesn't exit yet ;-(
+		if (!multithread) {
+			float temp;
+			for (int i=0; i<m.getM(); i++) {
+				temp = 0.0f;
+				for (int j : m.getNonZeroRowIndecies(i)) {
+					temp += getValue(j) * m.getValue(i, j);
+				}
+				result.setValue(i, temp);
 			}
-			result.setValue(i, temp);
+		} else {
+			int numThreads = multiplier.length;
+			CountDownLatch mainLatch = new CountDownLatch(numThreads);
+			int perThread = m.getM() / numThreads;
+			for (int i=0; i<numThreads; i++) {
+				int startIndex = i * perThread;
+				int endIndex = startIndex + perThread - 1;
+				if (i+1 == numThreads) {
+					endIndex = m.getM() - 1;
+				}
+				multiplier[i] = new MatrixVectorMultiplier(m, result, startIndex, endIndex);
+				multiplier[i].setLatch(mainLatch);
+				executor.execute(multiplier[i]);
+			}
+			try {
+				mainLatch.await();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
+
 		return result;
 	}
 
@@ -141,6 +178,38 @@ public class ArrayVector implements Vector {
 	private void verifyVectorSizesMatch(Vector v1, Vector v2) {
 		if (v1.getSize() != v2.getSize()) {
 			throw new IllegalArgumentException("The vectors must be of the same size");
+		}
+	}
+
+	private class MatrixVectorMultiplier implements Runnable {
+		Matrix m = null;
+		Vector result = null;
+		int startIndex = 0;
+		int endIndex = 0;
+		CountDownLatch cdl = null;
+
+		public MatrixVectorMultiplier(Matrix m, Vector result, int startIndex, int endIndex) {
+			this.m = m;
+			this.result = result;
+			this.startIndex = startIndex;
+			this.endIndex = endIndex;
+		}
+
+		public void setLatch(CountDownLatch cdl) {
+			this.cdl = cdl;
+		}
+
+		@Override
+		public void run() {
+			float temp;
+			for (int i=startIndex; i<=endIndex; i++) {
+				temp = 0.0f;
+				for (int j : m.getNonZeroRowIndecies(i)) {
+					temp += getValue(j) * m.getValue(i, j);
+				}
+				result.setValue(i, temp);
+			}
+			cdl.countDown();
 		}
 	}
 }

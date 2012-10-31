@@ -34,16 +34,16 @@ public class Driver {
 		Vector b = new ArrayVector(bVal);
 		System.out.println(ConjugateGradientSolver.solve(A, b));
 		*/
-		
+
 		Matrix A = Driver.readMatrixFile("matrix.txt.mtx");
-//		System.out.println("Got the matrix");
 		Vector b = Driver.readVectorFile("vector.txt.mtx");
-//		System.out.println("Got the vector");
-		
-		long start = System.currentTimeMillis();
-		Vector solution = ConjugateGradientSolver.solve(A, b);
-		
-		double time = ((double) (System.currentTimeMillis() - start))/1000;
+		//printVectorToFile(b, "java_b.mtx");
+		//printMatrixToFile(A, "java_A.mtx");
+		Matrix P = Driver.readMatrixFile("P.mtx");
+		long start = System.nanoTime();
+		//Vector solution = ConjugateGradientSolver.solve(A, b);
+		Vector solution = ConjugateGradientSolver.pcgSolve(A, b, P);
+		double time = ((double) (System.nanoTime() - start))/1000000000;
 		
 		System.out.println(time);
 		
@@ -67,14 +67,14 @@ public class Driver {
 			if (m == null) {
 				// this should only happen for the first line of content, which
 				// tells us the matrix size
-				m = new Matrix(Integer.parseInt(temp[0]),
-				               Integer.parseInt(temp[1]));
+				m = new Matrix(Integer.parseInt(temp[0]) + 1,
+				               Integer.parseInt(temp[1]) + 1);
 				continue;
 			}
 			// this is an entry
 			m.setValue(Integer.parseInt(temp[0]),
-		               Integer.parseInt(temp[1]),
-                       Float.parseFloat(temp[2]));
+			           Integer.parseInt(temp[1]),
+			           Float.parseFloat(temp[2]));
 		}
 		br.close();
 		return m;
@@ -93,12 +93,12 @@ public class Driver {
 			if (v == null) {
 				// this should only happen for the first line of content, which
 				// tells us the vector
-				v = new ArrayVector(Integer.parseInt(temp[1]));
+				v = new ArrayVector(Integer.parseInt(temp[1]) + 1);
 				continue;
 			}
 			// this is an entry
 			v.setValue(Integer.parseInt(temp[1]),
-                       Float.parseFloat(temp[2]));
+			           Float.parseFloat(temp[2]));
 		}
 		br.close();
 		return v;
@@ -116,12 +116,35 @@ public class Driver {
 		out.newLine();
 		out.write("%");
 		out.newLine();
-		out.write("1 " + v.getSize() + " " + numEntries);
+		out.write("1 " + (v.getSize() - 1) + " " + numEntries);
 		out.newLine();
 		for (int i=0; i<v.getSize(); i++) {
 			if (v.getValue(i) != 0.0f) {
-				out.write("1 " + (i+1) + " " + v.getValue(i));
+				out.write("1 " + i + " " + v.getValue(i));
 				out.newLine();
+			}
+		}
+		out.close();
+	}
+
+	public static void printMatrixToFile(Matrix m, String fileName) throws IOException {
+		int numEntries = 0;
+		for (int i=0; i<m.getM(); i++) {
+			numEntries += m.getNonZeroRowIndecies(i).size();
+		}
+		BufferedWriter out = new BufferedWriter(new FileWriter(fileName));
+		out.write("%%MatrixMarket matrix coordinate real general");
+		out.newLine();
+		out.write("%");
+		out.newLine();
+		out.write((m.getM() - 1) + " " + (m.getN() - 1) + " " + numEntries);
+		out.newLine();
+		for (int i=0; i<m.getM(); i++) {
+			for (int j : m.getNonZeroRowIndecies(i)) {
+				if (m.getValue(i, j) != 0.0f) {
+					out.write(i + " " + j + " " + m.getValue(i, j));
+					out.newLine();
+				}
 			}
 		}
 		out.close();

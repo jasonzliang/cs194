@@ -1,23 +1,23 @@
 package math;
 
-import java.util.Hashtable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.locks.Lock;
 
 public class Matrix {
 	private Map<Integer, Float> matrixValues[] = null;
 	private int m, n;
-	private Lock lock[];
 
 	public Matrix(int m, int n) {
-		matrixValues = (Hashtable<Integer, Float>[]) new Hashtable[m + 1];
-		for (int i=0; i<m + 1; i++) {
-			matrixValues[i] = new Hashtable<Integer, Float>();
+		matrixValues = (Map<Integer, Float>[]) new Map[m];
+		for (int i=0; i<m; i++) {
+			matrixValues[i] = new HashMap<Integer, Float>();
 		}
 		this.m = m;
 		this.n = n;
-		lock = new Lock[m + 1];
 	}
 
 	public int getM() {
@@ -28,7 +28,6 @@ public class Matrix {
 		return n;
 	}
 
-	// needs to be locked on i!
 	public float getValue(int i, int j) {
 		if (matrixValues[i].get(j) != null) {
 			return matrixValues[i].get(j);
@@ -41,9 +40,32 @@ public class Matrix {
 		return matrixValues[row].keySet();
 	}
 
-	// needs to be locked on i!
 	public void setValue(int i, int j, float value) {
 		matrixValues[i].put(j, value);
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder s = new StringBuilder();
+		List<Integer> l = new ArrayList<Integer>();
+		boolean addLineBreak = false;
+		for (int i=0; i<matrixValues.length; i++) {
+			l.addAll(matrixValues[i].keySet());
+			Collections.sort(l);
+			boolean addComma = false;
+			if (addLineBreak) {
+				s.append("\n");
+			}
+			for (int j : l) {
+				if (addComma) {
+					s.append(", ");
+				}
+				s.append("[" + i + ", " + j + "]: " + getValue(i, j));
+				addComma = true;
+			}
+			addLineBreak = true;
+			l.removeAll(matrixValues[i].keySet());
+		}
+		return s.toString();
+	}
 }
