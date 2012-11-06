@@ -39,10 +39,10 @@ public class Driver {
 		Vector b = Driver.readVectorFile("vector.txt.mtx");
 		//printVectorToFile(b, "java_b.mtx");
 		//printMatrixToFile(A, "java_A.mtx");
-		Matrix P = Driver.readMatrixFile("P.mtx");
+		//Matrix P = Driver.readMatrixFile("P.mtx");
 		long start = System.nanoTime();
-		//Vector solution = ConjugateGradientSolver.solve(A, b);
-		Vector solution = ConjugateGradientSolver.pcgSolve(A, b, P);
+		Vector solution = ConjugateGradientSolver.solve(A, b);
+		//Vector solution = ConjugateGradientSolver.pcgSolve(A, b, P);
 		double time = ((double) (System.nanoTime() - start))/1000000000;
 		
 		System.out.println(time);

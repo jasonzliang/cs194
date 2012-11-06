@@ -1,8 +1,5 @@
 package math;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class ConjugateGradientSolver {
 	/**
 	 * Uses a guess value for x of a zero vector
@@ -28,6 +25,7 @@ public class ConjugateGradientSolver {
 		//     break;
 		//   p=r+rsnew/rsold*p;
 		//   rsold=rsnew;
+		/*
 		Vector r = b.vectorSubtraction(x.matrixVectorMultiplication(A));
 		Vector p = r.clone();
 		float rsold = r.norm();
@@ -46,6 +44,50 @@ public class ConjugateGradientSolver {
 			p = r.vectorAddition(p.scalarMultiplication(rsnew/rsold));
 			rsold = rsnew;
 			//System.out.println(i + " (" + rsold + "): " + x);
+		}
+		return x;
+		*/
+		
+		//r = b + A*b;
+		float tol = 1e-5f;
+		Vector r = b.matrixVectorMultiplication(A);
+		r.add(b);
+		//y = -r;
+		Vector y = r.scalarMultiplication(-1.0f);
+		//z = A*y;
+		Vector z = y.matrixVectorMultiplication(A);
+		//s = y'*z;
+		float s = y.dotProduct(z);
+		//t = (r'*y)/s;
+		float t = r.dotProduct(y)/s;
+		//x = -b + t*y;
+		x = y.scalarMultiplication(t);
+		x.subtract(b);
+
+		//for k = 1:numel(b);
+		maxIters = 1000; // requires a ridiculous number of iterations to get anywhere near close
+		for (int k=0; k<maxIters; k++) {
+			//r = r - t*z;
+			r.subtract(z.scalarMultiplication(t));
+			//if( norm(r) < tol ) return
+			if (r.norm() < tol) {
+				break;
+			}
+			//B = (r'*z)/s;
+			float B = r.dotProduct(z) / s;
+			//y = -r + B*y;
+			y = y.scalarMultiplication(B);
+			y.subtract(r);
+			//z = A*y;
+			z = y.matrixVectorMultiplication(A);
+			//s = y'*z;
+			s = y.dotProduct(z);
+			//t = (r'*y)/s;
+			t = r.dotProduct(y) / s;
+			//x = x + t*y;
+			x.add(y.scalarMultiplication(t));
+			//fprintf('Residual: %f\n', norm(A*x-b));
+			System.out.println(k + ": " + r.norm() + ", " + x.matrixVectorMultiplication(A).vectorSubtraction(b).norm());
 		}
 		return x;
 	}
