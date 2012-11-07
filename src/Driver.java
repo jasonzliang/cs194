@@ -1,13 +1,12 @@
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 
-import math.ArrayVector;
-import math.ConjugateGradientSolver;
-import math.Matrix;
-import math.Vector;
+import cleanerversion.ArrayVector;
+import cleanerversion.ConjugateGradientSolver;
+import cleanerversion.Matrix;
+import cleanerversion.SparseHashedMatrix;
+import cleanerversion.Vector;
 
 
 public class Driver {
@@ -25,33 +24,28 @@ public class Driver {
 		                   {-1.0f, 2.0f, -1.0f}, 
 		                   {0.0f, -1.0f, 2.0f} };
 		float bVal[] = { 0.0f, 0.0f, 4.0f };
-		Matrix A = new Matrix(3, 3);
+		Matrix A = new SparseHashedMatrix(3, 3);
 		for (int i=0; i<aVal.length; i++) {
 			for (int j=0; j<aVal[0].length; j++) {
 				A.setValue(i, j, aVal[i][j]);
 			}
 		}
-		Vector b = new ArrayVector(bVal);
+		Vector b = new ArrayVector(3);
+		for (int i=0; i<bVal.length; i++) {
+			b.setValue(i, bVal[i]);
+		}
 		System.out.println(ConjugateGradientSolver.solve(A, b));
 		*/
 
 		Matrix A = Driver.readMatrixFile("matrix.txt.mtx");
 		Vector b = Driver.readVectorFile("vector.txt.mtx");
-		//printVectorToFile(b, "java_b.mtx");
-		//printMatrixToFile(A, "java_A.mtx");
-		//Matrix P = Driver.readMatrixFile("P.mtx");
 		long start = System.nanoTime();
 		Vector solution = ConjugateGradientSolver.solve(A, b);
-		//Vector solution = ConjugateGradientSolver.pcgSolve(A, b, P);
 		double time = ((double) (System.nanoTime() - start))/1000000000;
 		
 		System.out.println(time);
 		
-		String fileName = "java_solution.txt.mtx";
-		if (args.length > 0) {
-			fileName = args[0] + ".txt.mtx";
-		}
-		printVectorToFile(solution, fileName);
+		solution.printToMatrixMarketFile("java_solution", true);
 	}
 
 	public static Matrix readMatrixFile(String fileName) throws IOException {
@@ -67,8 +61,8 @@ public class Driver {
 			if (m == null) {
 				// this should only happen for the first line of content, which
 				// tells us the matrix size
-				m = new Matrix(Integer.parseInt(temp[0]) + 1,
-				               Integer.parseInt(temp[1]) + 1);
+				m = new SparseHashedMatrix(Integer.parseInt(temp[0]) + 1,
+				                           Integer.parseInt(temp[1]) + 1);
 				continue;
 			}
 			// this is an entry
@@ -102,51 +96,5 @@ public class Driver {
 		}
 		br.close();
 		return v;
-	}
-
-	public static void printVectorToFile(Vector v, String fileName) throws IOException {
-		int numEntries = 0;
-		for (int i=0; i<v.getSize(); i++) {
-			if (v.getValue(i) != 0.0f) {
-				numEntries++;
-			}
-		}
-		BufferedWriter out = new BufferedWriter(new FileWriter(fileName));
-		out.write("%%MatrixMarket matrix coordinate real general");
-		out.newLine();
-		out.write("%");
-		out.newLine();
-		out.write("1 " + (v.getSize() - 1) + " " + numEntries);
-		out.newLine();
-		for (int i=0; i<v.getSize(); i++) {
-			if (v.getValue(i) != 0.0f) {
-				out.write("1 " + i + " " + v.getValue(i));
-				out.newLine();
-			}
-		}
-		out.close();
-	}
-
-	public static void printMatrixToFile(Matrix m, String fileName) throws IOException {
-		int numEntries = 0;
-		for (int i=0; i<m.getM(); i++) {
-			numEntries += m.getNonZeroRowIndecies(i).size();
-		}
-		BufferedWriter out = new BufferedWriter(new FileWriter(fileName));
-		out.write("%%MatrixMarket matrix coordinate real general");
-		out.newLine();
-		out.write("%");
-		out.newLine();
-		out.write((m.getM() - 1) + " " + (m.getN() - 1) + " " + numEntries);
-		out.newLine();
-		for (int i=0; i<m.getM(); i++) {
-			for (int j : m.getNonZeroRowIndecies(i)) {
-				if (m.getValue(i, j) != 0.0f) {
-					out.write(i + " " + j + " " + m.getValue(i, j));
-					out.newLine();
-				}
-			}
-		}
-		out.close();
 	}
 }
