@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
 
 public final class SparseHashedMatrix implements Matrix {
 	private List<Map<Integer, Float>> values = null;
@@ -69,6 +70,7 @@ public final class SparseHashedMatrix implements Matrix {
 
 		Vector result = new ArrayVector(v.getSize());
 
+		/*
 		// TODO: this should be threaded
 		for (int row=0; row<N; row++) {
 			float temp = 0.0f;
@@ -76,6 +78,23 @@ public final class SparseHashedMatrix implements Matrix {
 				temp += this.getValue(column, row) * v.getValue(column);
 			}
 			result.setValue(row, temp);
+		}
+		*/
+		int threads = ExecutorServiceProvider.getNumConcurrentThreads();
+		CountDownLatch mainLatch = new CountDownLatch(threads);
+		int perThread = getN() / threads;
+		for (int i=0; i<threads; i++) {
+			int startIndex = i * perThread;
+			int endIndex = startIndex + perThread - 1;
+			if (i+1 == threads) {
+				endIndex = getN() - 1;
+			}
+			ExecutorServiceProvider.execute(new MatrixVectorMultiplier(v, result, startIndex, endIndex, mainLatch));
+		}
+		try {
+			mainLatch.await();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
 
 		return result;
@@ -115,5 +134,32 @@ public final class SparseHashedMatrix implements Matrix {
 			}
 		}
 		out.close();
+	}
+
+	private class MatrixVectorMultiplier implements Runnable {
+		private CountDownLatch cdl = null;
+		private Vector v = null;
+		private Vector result = null;
+		private int startIndex, endIndex;
+
+		public MatrixVectorMultiplier(Vector v, Vector result, int start, int end, CountDownLatch cdl) {
+			this.cdl = cdl;
+			this.v = v;
+			this.result = result;
+			startIndex = start;
+			endIndex = end;
+		}
+
+		public void run() {
+			float temp;
+			for (int row=startIndex; row<=endIndex; row++) {
+				temp = 0.0f;
+				for (int col : getKeysOfNonZeroElementsForRow(row)) {
+					temp += v.getValue(col) * getValue(col, row);
+				}
+				result.setValue(row, temp);
+			}
+			cdl.countDown();
+		}
 	}
 }

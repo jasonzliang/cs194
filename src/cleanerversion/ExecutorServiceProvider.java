@@ -14,10 +14,13 @@ public class ExecutorServiceProvider {
 
 	public static ExecutorService getExecutorService() {
 		if (executor == null) {
-			int numProcessors = Runtime.getRuntime().availableProcessors();
-			executor = Executors.newFixedThreadPool(numProcessors);
+			executor = Executors.newFixedThreadPool(getNumConcurrentThreads());
 		}
 		return executor;
+	}
+
+	public static int getNumConcurrentThreads() {
+		return Runtime.getRuntime().availableProcessors() * 2;
 	}
 
 	public static void execute(Runnable r) {
@@ -25,6 +28,6 @@ public class ExecutorServiceProvider {
 	}
 
 	public static void shutDownExecutor() {
-		getExecutorService().shutdown();
+		getExecutorService().shutdownNow();
 	}
 }

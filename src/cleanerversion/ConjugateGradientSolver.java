@@ -46,6 +46,9 @@ public class ConjugateGradientSolver {
 	    //end
 		}
 
+		// kill the executor service
+		ExecutorServiceProvider.shutDownExecutor();
+
 		return x;
 	}
 }
