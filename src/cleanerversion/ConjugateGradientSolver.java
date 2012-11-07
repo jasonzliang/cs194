@@ -6,25 +6,26 @@ public class ConjugateGradientSolver {
 	}
 
 	public static Vector solve(Matrix A, Vector b, float tolerance) {
-	    //r = b + A*b;
+		//r = b + A*b;
 		Vector r = A.multiply(b).increaseBy(b);
-	    //y = -r;
+		//y = -r;
 		Vector y = r.multiply(-1.0f);
-	    //z = A*y;
+		//z = A*y;
 		Vector z = A.multiply(y);
-	    //s = y'*z;
+		//s = y'*z;
 		float s = y.dotProduct(z);
-	    //t = (r'*y)/s;
+		//t = (r'*y)/s;
 		float t = r.dotProduct(y) / s;
-	    //x = -b + t*y;
+		//x = -b + t*y;
 		Vector x = y.multiply(t).subtractBy(b);
 
-	    //for k = 1:numel(b);
-		for (int k=0; k<b.getSize(); k++) {
+		//for k = 1:numel(b);
+		int maxIters = b.getSize();
+		for (int k=0; k<maxIters; k++) {
 			// r = r - t*z;
 			r.subtractBy(z.multiply(t));
 			// if( norm(r) < tol )
-			//      return;
+			//	  return;
 			// end
 			if (r.norm() < tolerance) {
 				break;
@@ -42,8 +43,8 @@ public class ConjugateGradientSolver {
 			// x = x + t*y;
 			x.increaseBy(y.multiply(t));
 			// fprintf('Residual: %f\n', norm(A*x-b));
-			System.out.println("Residual (" + k + "): " + A.multiply(x).subtractBy(b).norm());
-	    //end
+			System.out.println("Residual (" + k + "/" + maxIters + "): " + A.multiply(x).subtractBy(b).norm());
+		//end
 		}
 
 		// kill the executor service

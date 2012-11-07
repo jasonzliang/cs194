@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import cleanerversion.ArrayVector;
 import cleanerversion.ConjugateGradientSolver;
+import cleanerversion.ExecutorServiceProvider;
 import cleanerversion.Matrix;
 import cleanerversion.SparseHashedMatrix;
 import cleanerversion.Vector;
@@ -36,6 +37,12 @@ public class Driver {
 		}
 		System.out.println(ConjugateGradientSolver.solve(A, b));
 		*/
+		if (args.length > 0) {
+			int threads = Integer.parseInt(args[0]);
+			if (threads > 0) {
+				ExecutorServiceProvider.setNumConcurrentThreads(threads);
+			}
+		}
 
 		Matrix A = Driver.readMatrixFile("matrix.txt.mtx");
 		Vector b = Driver.readVectorFile("vector.txt.mtx");
@@ -44,6 +51,7 @@ public class Driver {
 		double time = ((double) (System.nanoTime() - start))/1000000000;
 		
 		System.out.println(time);
+		System.out.println("Num threads: " + ExecutorServiceProvider.getNumConcurrentThreads());
 		
 		solution.printToMatrixMarketFile("java_solution", true);
 	}

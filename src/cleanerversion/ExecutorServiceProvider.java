@@ -11,6 +11,7 @@ import java.util.concurrent.Executors;
  */
 public class ExecutorServiceProvider {
 	private static ExecutorService executor = null;
+	private static int numThreads = Runtime.getRuntime().availableProcessors();
 
 	public static ExecutorService getExecutorService() {
 		if (executor == null) {
@@ -19,8 +20,12 @@ public class ExecutorServiceProvider {
 		return executor;
 	}
 
+	public static void setNumConcurrentThreads(int num) {
+		numThreads = num;
+	}
+
 	public static int getNumConcurrentThreads() {
-		return Runtime.getRuntime().availableProcessors() * 2;
+		return numThreads;
 	}
 
 	public static void execute(Runnable r) {
