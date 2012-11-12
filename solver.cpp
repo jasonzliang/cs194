@@ -1,0 +1,6 @@
+#include "solver.h"
+#include <iostream>
+
+int main(int argc, char **argv) {
+  cout << "Hello World!" << endl;
+}
