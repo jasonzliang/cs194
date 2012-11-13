@@ -1,1 +1,0 @@
-/usr/bin/c++       CMakeFiles/solver.dir/solver.cpp.o  -o solver -rdynamic 
