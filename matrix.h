@@ -1,9 +1,14 @@
-#ifndef matrix_H
-#define matrix_H
-class matrix {
+#ifndef MATRIX_H
+#define MATRIX_H
 
-//implement me!
+/**
+ * An interface for matrices
+ */
+class Matrix {
+
+
 
 };
+
 #endif
 

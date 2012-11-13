@@ -1,14 +1,12 @@
-#ifndef matrix_H
-#define matrix_H
+#ifndef SOLVER_H
+#define SOLVER_H
 
 #include "vector.h"
 #include "matrix.h"
 
-using namespace std;
-
 class solver {
   
-//implement me!
+
   
 };
 

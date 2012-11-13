@@ -1,9 +1,14 @@
-#ifndef vector_H
-#define vector_H
-class vector {
+#ifndef VECTOR_H
+#define VECTOR_H
 
-//implement me!
+/**
+ * An interface for vectors
+ */
+class Vector {
+
+
   
 };
+
 #endif
 
