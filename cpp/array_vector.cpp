@@ -147,8 +147,8 @@ class ArrayVector : public Vector<T> {
 	  values = new T[size];	
 	  continue;
 	}
-
-	values[col] = val;
+	
+	setValue(col, val);
       }
 
       mmFile.close();
