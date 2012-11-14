@@ -19,12 +19,12 @@ class Vector : PrintableElementContainer {
   /**
    * @return the size of this vector
    */
-  virtual const int getSize() = 0;
+  virtual int getSize() const = 0;
 
   /**
    * @return the element at the given index
    */
-  virtual const T getValue(int) = 0;
+  virtual T getValue(int) const = 0;
 
   /**
    * set the element at the given index (int) to the given value (T)
@@ -34,12 +34,12 @@ class Vector : PrintableElementContainer {
   /**
    * @return the scalar dot product of this and the argument Vector
    */
-  virtual const T dotProduct(Vector<T> &) = 0;
+  virtual T dotProduct(Vector<T> &) const = 0;
 
   /**
    * @return the dot product of this vector with itself
    */
-  const T norm() {
+  T norm() const {
     return dotProduct(*this);
   }
 
@@ -47,37 +47,37 @@ class Vector : PrintableElementContainer {
    * mutate this vector by adding element-wise with the argument Vector
    * @return this vector
    */
-  virtual Vector<T> increaseBy(Vector<T> &) = 0;
+  virtual void increaseBy(Vector<T> &) = 0;
 
   /**
    * mutate this vector by stracting the argument Vector's elements from
    * this vector (as in: this vector - argument vector)
    * @return this vector
    */
-  virtual Vector<T> reduceBy(Vector<T> &) = 0;
+  virtual void reduceBy(Vector<T> &) = 0;
 
   /**
    * mutate this vector by multiplying each element with the argument
    * @return this vector
    */
-  virtual Vector<T> scaleBy(T) = 0;
+  virtual void scaleBy(T) = 0;
 
   /**
    * @return a new vector that's (this vector) + (argument vector)
    */
-  virtual Vector<T> & operator+(const Vector<T> &) = 0;
+  //virtual const Vector<T> operator+(const Vector<T> &) const = 0;
 
   /**
    * @return a new vector that's (this vector) - (argument vector)
    */
-  virtual Vector<T> & operator-(const Vector<T> &) = 0;
+  //virtual Vector<T> & operator-(const Vector<T> &) const = 0;
 
   /**
    * @return a new vector that's (this vector)*argument
    */
-  virtual Vector<T> & operator*(const T) = 0;
+  //virtual Vector<T> & operator*(const T) const = 0;
 
-  T & operator[](const int i) {
+  T & operator[](int i) {
     return getValue(i);
   }
 };

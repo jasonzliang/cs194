@@ -7,7 +7,8 @@ using namespace std;
 int main(int argc, char **argv) {
   cout << "Hello World!" << endl;
 
-  ArrayVector<int> av(0);
+  ArrayVector<int> av(10);
+  av.printToMatrixMarketFile("asdf");
 
   return 0;
 }
