@@ -2,6 +2,7 @@
 #include "printable_element_container.h"
 #include <iostream>
 #include <malloc.h>
+#include <fstream>
 
 using namespace std;
 
@@ -87,15 +88,23 @@ class ArrayVector : public Vector<T> {
 
   void printToMatrixMarketFile(string fileName) {
     // TODO: implement properly
+    ofstream mmFile (fileName.c_str());
 
-    // this is just for testing...
-    for (int i=0; i<getSize(); i++) {
-      if (i > 0) {
-	cout << ", ";
+    if (mmFile.is_open()) {
+      // this is just for testing...
+      for (int i=0; i<getSize(); i++) {
+	if (i > 0) {
+	  mmFile << ", ";
+	}
+	mmFile << values[i];
       }
-      cout << values[i];
+      mmFile << endl;
+      
+      mmFile.close();
+    } else {
+      cout << "Problem writing matrix market file" << endl;
     }
-    cout << endl;
+
   }
 
 };
