@@ -63,19 +63,19 @@ class Vector : PrintableElementContainer {
   virtual void scaleBy(T) = 0;
 
   /**
-   * @return a new vector that's (this vector) + (argument vector)
+   * result = (this vector) + v2
    */
-  //virtual const Vector<T> operator+(const Vector<T> &) const = 0;
+  virtual void add(const Vector<T> &v2, Vector<T> &result) const = 0;
 
   /**
-   * @return a new vector that's (this vector) - (argument vector)
+   * result = (this vector) - v2
    */
-  //virtual Vector<T> & operator-(const Vector<T> &) const = 0;
+  virtual void subtract(const Vector<T> &, Vector<T> &result) const = 0;
 
   /**
-   * @return a new vector that's (this vector)*argument
+   * result = (this vector) * s
    */
-  //virtual Vector<T> & operator*(const T) const = 0;
+  virtual void multiply(const T, Vector<T> &result) const = 0;
 
   const T operator[](const int i) const {
     return getValue(i);

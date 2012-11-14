@@ -26,8 +26,6 @@ class ArrayVector : public Vector<T> {
   }
 
   ~ArrayVector<T>() {
-    cout << "freedom!  ";
-    printToMatrixMarketFile("blah");
     delete[] values;
   }
 
@@ -69,28 +67,22 @@ class ArrayVector : public Vector<T> {
     }
   }
 
-  const ArrayVector<T> operator+(const Vector<T> &v2) const {
-    ArrayVector<T> result(getSize());
+  void add(const Vector<T> &v2, Vector<T> &result) const {
     for (int i=0; i<getSize(); i++) {
       result.setValue(i, values[i] + v2[i]);
     }
-    return result;
   }
 
-  const ArrayVector<T> operator-(const Vector<T> &v2) const {
-    ArrayVector<T> result(getSize());
+  void subtract(const Vector<T> &v2, Vector<T> &result) const {
     for (int i=0; i<getSize(); i++) {
       result.setValue(i, values[i] - v2[i]);
     }
-    return result;
   }
 
-  const ArrayVector<T> operator*(const T s) const {
-    ArrayVector<T> result(getSize());
+  void multiply(const T s, Vector<T> &result) const {
     for (int i=0; i<getSize(); i++) {
       result.setValue(i, values[i] * s);
     }
-    return result;
   }
 
   void printToMatrixMarketFile(string fileName) {
