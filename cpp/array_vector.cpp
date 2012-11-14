@@ -104,7 +104,16 @@ class ArrayVector : public Vector<T> {
     } else {
       cout << "Problem writing matrix market file" << endl;
     }
+  }
 
+  void print() {
+    for (int i=0; i<getSize(); i++) {
+      if (i > 0) {
+	cout << ", ";
+      }
+      cout << values[i];
+    }
+    cout << endl;
   }
 
 };

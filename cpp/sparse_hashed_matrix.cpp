@@ -3,6 +3,7 @@
 #include "printable_element_container.h"
 #include <iostream>
 #include <map>
+#include <iterator>
 
 using namespace std;
 
@@ -23,7 +24,12 @@ class SparseHashedMatrix : public Matrix<T> {
 
   SparseHashedMatrix<T>(const SparseHashedMatrix<T> &m2) {
     SparseHashedMatrix newSHM = SparseHashedMatrix(m2.getM(), m2.getN());
-    // TODO: finish this!
+    typename map<int, T>::iterator itr;
+    for (int row=0; row<getN(); row++) {
+      for (itr = values[row].begin(); itr != values[row].end(); ++itr) {
+	m2.setValue(itr->first, row, itr->second);
+      }
+    }
   }
 
   ~SparseHashedMatrix<T>() {
@@ -39,7 +45,11 @@ class SparseHashedMatrix : public Matrix<T> {
   }
 
   T getValue(int column, int row) const {
-    return values[row][column];
+    if (values[row].find(column) == values[row].end()) {
+      return 0;
+    } else {
+      return values[row].find(column)->second;
+    }
   }
 
   void setValue(int column, int row, T value) {
@@ -47,11 +57,29 @@ class SparseHashedMatrix : public Matrix<T> {
   }
 
   void multiply(Vector<T> &v, Vector<T> &result) const {
-    // TODO: implement
+    typename map<int, T>::iterator itr;
+    for (int row=0; row<getN(); row++) {
+      T temp = 0;
+      for (itr = values[row].begin(); itr != values[row].end(); ++itr) {
+	temp += v.getValue(itr->first) * itr->second;
+      }
+      result.setValue(row, temp);
+    }
   }
 
   void printToMatrixMarketFile(string fileName) {
     // TODO: implement
+  }
+
+  // seriously don't use this except when testing
+  // with large matrices, things will go kaplooy
+  void print() {
+    for (int row=0; row<getN(); row++) {
+      for (int column=0; column<getM(); column++) {
+	cout << " " << getValue(column, row);
+      }
+      cout << endl;
+    }
   }
 
 };
