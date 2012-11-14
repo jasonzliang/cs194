@@ -11,7 +11,7 @@ template <typename T>
 class ArrayVector : public Vector<T> {
   private:
   T *values;
-  int size;
+  unsigned int size;
 
   public:
   ArrayVector<T>() {
@@ -24,6 +24,7 @@ class ArrayVector : public Vector<T> {
   }
 
   ArrayVector<T>(string fileName) {
+    size = 0;
     readFromMatrixMarketFile(fileName);
   }
 
