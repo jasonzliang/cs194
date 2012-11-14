@@ -7,8 +7,11 @@
 *.settings
 
 # CMake stuff that should be generated, not in the repo!
-CMakeFiles
-CMakeFiles/*
-CMakeCache.txt
-Makefile
-cmake_install.cmake
+*/CMakeFiles
+*/CMakeFiles/*
+*/CMakeCache.txt
+*/Makefile
+*/cmake_install.cmake
+
+# executables should not be checked in
+cpp/solver
