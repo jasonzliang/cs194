@@ -115,8 +115,8 @@ class SparseHashedMatrix : public Matrix<T> {
 	
        
 	if (M == 0 && N == 0) { // not allocated yet
-	  M = row;
-	  N = col;
+	  N = row + 1;
+	  M = col + 1;
 	  values = new map<int, T>[N];
 	  cout << "Matrix size: " << M << ", " << N << endl;
 
@@ -127,8 +127,8 @@ class SparseHashedMatrix : public Matrix<T> {
 	setValue(col, row, val);
 
 	// TODO : remove. for checking only
-	cout << "Setting val: col " << col << ", row" << row << " val " << val << endl;
-	cout << getValue(col, row) << endl;
+	//cout << "Setting val: col " << col << ", row" << row << " val " << val << endl;
+	//cout << getValue(col, row) << endl;
       }
 
       mmFile.close();
