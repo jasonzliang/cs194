@@ -26,11 +26,12 @@ class SparseHashedMatrix : public Matrix<T> {
   }
 
   SparseHashedMatrix<T>(const SparseHashedMatrix<T> &m2) {
-    SparseHashedMatrix newSHM = SparseHashedMatrix(m2.getM(), m2.getN());
+    this(m2.getM(), m2.getN());
+
     typename map<int, T>::iterator itr;
     for (int row=0; row<getN(); row++) {
-      for (itr = values[row].begin(); itr != values[row].end(); ++itr) {
-	m2.setValue(itr->first, row, itr->second);
+      for (itr = m2.values[row].begin(); itr != m2.values[row].end(); ++itr) {
+	setValue(itr->first, row, itr->second);
       }
     }
   }

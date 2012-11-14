@@ -28,9 +28,10 @@ class ArrayVector : public Vector<T> {
   }
 
   ArrayVector<T>(const ArrayVector<T> &v2) {
-    ArrayVector newAV = ArrayVector(v2.getSize());
+    this(v2.getSize());
+
     for (int i=0; i<v2.getSize(); i++) {
-      newAV.values[i] = v2.values[i];
+      values[i] = v2.values[i];
     }
   }
 
