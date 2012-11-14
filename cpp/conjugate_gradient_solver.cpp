@@ -24,10 +24,11 @@ class ConjugateGradientSolver : public Solver<T> {
     solve(result, matrix, vector, DEFAULT_TOLERANCE);
   }
 
+  // note: x = result
   void static solve(Vector<T> x, Matrix<T> A, Vector<T> b, float tolerance) {
-    ArrayVector<T> r;
-    ArrayVector<T> y;
-    ArrayVector<T> z;
+    ArrayVector<T> r(b.getSize());
+    ArrayVector<T> y(b.getSize());
+    ArrayVector<T> z(b.getSize());
     T s;
     T t;
 
@@ -36,8 +37,44 @@ class ConjugateGradientSolver : public Solver<T> {
     r.increaseBy(b);
     //y = -r;
     r.multiply(-1, x);
-    
+    //z = A*y;
+    A.multiply(y, z);
+    //s = y'*z;
+    s = y.dotProduct(z);
+    //t = (r'*y)/s;
+    t = r.dotProduct(y) / s;
+    //x = -b + t*y;
+    y.multiply(t, x);
+    x.reduceBy(b);
 
+    //for k = 1:numel(b);
     int maxIters = b.getSize();
+    for (int k=0; k<maxIters; k++) {
+      // r = r - t*z;
+      r.reduceBy(z.multiply(t));
+
+      cout << "Residual (" << k << "/" << maxIters << "): " << r.norm() << endl;
+
+      // if( norm(r) < tol )
+      //	  return;
+      // end
+      if (r.norm() < tolerance) {
+	break;
+      }
+      // B = (r'*z)/s;
+      T B = r.dotProduct(z) / s;
+      // y = -r + B*y;
+      y.scaleBy(B).subtractBy(r);
+      // z = A*y;
+      z = A.multiply(y);
+      // s = y'*z;
+      s = y.dotProduct(z);
+      // t = (r'*y)/s;
+      t = r.dotProduct(y) / s;
+      // x = x + t*y;
+      x.increaseBy(y.multiply(t));
+      // fprintf('Residual: %f\n', norm(A*x-b));
+    //end
+    }
   }
 };
