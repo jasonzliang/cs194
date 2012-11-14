@@ -37,7 +37,7 @@ class ConjugateGradientSolver : public Solver<T> {
     A.multiply(b, r);
     r.increaseBy(b);
     //y = -r;
-    r.multiply(-1, x);
+    r.multiply(-1.0, y);
     //z = A*y;
     A.multiply(y, z);
     //s = y'*z;
