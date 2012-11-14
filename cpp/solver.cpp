@@ -10,12 +10,8 @@ using namespace std;
 int main(int argc, char **argv) {
   cout << "Hello World!" << endl;
 
-  ArrayVector<int> av(10);
-  av.setValue(0,1);
-  av.setValue(5,4);
-  av.printToMatrixMarketFile("testout.txt");
   // test reading file - should print in console
-  av.readFromMatrixMarketFile("testout.txt");
+  ArrayVector<double> avRead("../vector.txt.mtx");
 
   SparseHashedMatrix<int> shm(5, 5);
   shm.setValue(0, 0, 2);
@@ -28,6 +24,7 @@ int main(int argc, char **argv) {
   mult.setValue(3, 4);
   mult.setValue(4, 5);
   mult.print();
+  mult.printToMatrixMarketFile("testout.txt");
   ArrayVector<int> res(5);
   shm.multiply(mult, res);
   res.print();

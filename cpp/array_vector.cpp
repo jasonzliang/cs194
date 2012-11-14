@@ -3,6 +3,7 @@
 #include <iostream>
 #include <malloc.h>
 #include <fstream>
+#include <sstream>
 
 using namespace std;
 
@@ -20,6 +21,10 @@ class ArrayVector : public Vector<T> {
   ArrayVector<T>(int s) {
     size = s;
     values = new T[size];
+  }
+
+  ArrayVector<T>(string fileName) {
+    readFromMatrixMarketFile(fileName);
   }
 
   ArrayVector<T>(const ArrayVector<T> &v2) {
@@ -97,17 +102,27 @@ class ArrayVector : public Vector<T> {
 
   void printToMatrixMarketFile(string fileName) {
     // TODO: implement properly
+    int numEntries = 0;
+    
+    for (int i = 0; i < getSize(); i++) {
+      if (getValue(i) != 0.0) {
+	numEntries++;
+      }
+    }
+
     ofstream mmFile (fileName.c_str());
 
     if (mmFile.is_open()) {
-      // this is just for testing...
+      
+      mmFile << "%%MatrixMarket matrix coordinate real general" << endl;
+      mmFile << "%" << endl;
+      mmFile << "1" << " " << getSize() << " " <<numEntries << endl;
+      
       for (int i=0; i<getSize(); i++) {
-	if (i > 0) {
-	  mmFile << ", ";
+	if (getValue(i) != 0) {
+	  mmFile << "1" << " " << i << " " << getValue(i) << endl;
 	}
-	mmFile << values[i];
       }
-      mmFile << endl;
       
       mmFile.close();
     } else {
@@ -126,15 +141,45 @@ class ArrayVector : public Vector<T> {
   }
 
   void readFromMatrixMarketFile(string fileName) {
+    int row, col;
+    T val; // really this has to be double or float
+
     string line;
     ifstream mmFile (fileName.c_str());
     
+    int i = 0;
     if (mmFile.is_open()) {
       while (mmFile.good()) {
 	getline(mmFile, line);
-	cout << line << endl;	
+	
+	if (line[0] == '%') {
+	  continue;
+	}
+
+	std::stringstream lineStream(line);
+	
+	lineStream >> row >> col  >> val;
+	
+	if (size == 0) { // not allocated yet
+	  size = col + 1;
+	  cout << "Vector size: " << size << endl;
+	  values = new T[size];	
+	  continue;
+	}
+	
+	setValue(col, val);
       }
+
+      mmFile.close();
     }
+
+    // TODO : just for checking, remove later
+    cout << "First 10 values of vector:" << endl;
+    for (int i = 0; i < 10; i++) {
+      cout << values[i] << endl;
+    }
+
+
   }
 
 };
