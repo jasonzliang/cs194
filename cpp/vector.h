@@ -1,13 +1,13 @@
 #ifndef VECTOR_H
 #define VECTOR_H
 
-#include "printable_element_container.h"
+#include "matrix_market_handler.h"
 
 /**
  * An interface for vectors
  */
 template <typename T>
-class Vector : PrintableElementContainer {
+class Vector : MatrixMarketHandler {
 
   public:
   /**

@@ -4,6 +4,8 @@
 
 using namespace std;
 
+
+
 int main(int argc, char **argv) {
   cout << "Hello World!" << endl;
 
@@ -11,6 +13,9 @@ int main(int argc, char **argv) {
   av.setValue(0,1);
   av.setValue(5,4);
   av.printToMatrixMarketFile("testout.txt");
+
+  // test reading file - should print in console
+  av.readFromMatrixMarketFile("testout.txt");
 
 
   return 0;
