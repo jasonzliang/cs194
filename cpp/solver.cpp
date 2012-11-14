@@ -13,6 +13,8 @@ int main(int argc, char **argv) {
   // test reading file - should print in console
   ArrayVector<double> avRead("../vector.txt.mtx");
 
+  SparseHashedMatrix<float> shmRead("../matrix.txt.mtx");
+
   SparseHashedMatrix<int> shm(5, 5);
   shm.setValue(0, 0, 2);
   shm.setValue(3, 2, 3);
