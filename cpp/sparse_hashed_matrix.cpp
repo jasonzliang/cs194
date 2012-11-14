@@ -16,7 +16,8 @@ class SparseHashedMatrix : public Matrix<T> {
 
   public:
   SparseHashedMatrix<T>() {
-    this(0, 0);
+    M = 0;
+    N = 0;
   }
 
   SparseHashedMatrix<T>(int m, int n) {
@@ -26,7 +27,8 @@ class SparseHashedMatrix : public Matrix<T> {
   }
 
   SparseHashedMatrix<T>(const SparseHashedMatrix<T> &m2) {
-    this(m2.getM(), m2.getN());
+    M = m2.getM();
+    N = m2.getN();
 
     typename map<int, T>::iterator itr;
     for (int row=0; row<getN(); row++) {

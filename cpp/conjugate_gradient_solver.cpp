@@ -31,6 +31,7 @@ class ConjugateGradientSolver : public Solver<T> {
     ArrayVector<T> z(b.getSize());
     T s;
     T t;
+    ArrayVector<T> temp(b.getSize());
 
     //r = b + A*b;
     A.multiply(b, r);
@@ -51,7 +52,8 @@ class ConjugateGradientSolver : public Solver<T> {
     int maxIters = b.getSize();
     for (int k=0; k<maxIters; k++) {
       // r = r - t*z;
-      r.reduceBy(z.multiply(t));
+      z.multiply(t, temp);
+      r.reduceBy(temp);
 
       cout << "Residual (" << k << "/" << maxIters << "): " << r.norm() << endl;
 
@@ -64,15 +66,17 @@ class ConjugateGradientSolver : public Solver<T> {
       // B = (r'*z)/s;
       T B = r.dotProduct(z) / s;
       // y = -r + B*y;
-      y.scaleBy(B).subtractBy(r);
+      y.scaleBy(B);
+      y.reduceBy(r);
       // z = A*y;
-      z = A.multiply(y);
+      A.multiply(y, z);
       // s = y'*z;
       s = y.dotProduct(z);
       // t = (r'*y)/s;
       t = r.dotProduct(y) / s;
       // x = x + t*y;
-      x.increaseBy(y.multiply(t));
+      y.multiply(t, temp);
+      x.increaseBy(temp);
       // fprintf('Residual: %f\n', norm(A*x-b));
     //end
     }

@@ -12,24 +12,27 @@ class ArrayVector : public Vector<T> {
   private:
   T *values;
   unsigned int size;
-
-  public:
-  ArrayVector<T>() {
-    this(0);
-  }
-
-  ArrayVector<T>(int s) {
+  void init(int s) {
     size = s;
     values = new T[size];
   }
 
+  public:
+  ArrayVector<T>() {
+    init(0);
+  }
+
+  ArrayVector<T>(int s) {
+    init(s);
+  }
+
   ArrayVector<T>(string fileName) {
-    size = 0;
+    init(0);
     readFromMatrixMarketFile(fileName);
   }
 
   ArrayVector<T>(const ArrayVector<T> &v2) {
-    this(v2.getSize());
+    init(v2.getSize());
 
     for (int i=0; i<v2.getSize(); i++) {
       values[i] = v2.values[i];
@@ -58,7 +61,7 @@ class ArrayVector : public Vector<T> {
     values[i] = value;
   }
 
-  T dotProduct(Vector<T> &v2) const {
+  T dotProduct(const Vector<T> &v2) const {
     T temp;
     for (int i=0; i<getSize(); i++) {
       temp += values[i] * v2[i];

@@ -40,7 +40,7 @@ class Vector : MatrixMarketHandler {
   /**
    * @return the scalar dot product of this and the argument Vector
    */
-  virtual T dotProduct(Vector<T> &) const = 0;
+  virtual T dotProduct(const Vector<T> &) const = 0;
 
   /**
    * @return the dot product of this vector with itself
