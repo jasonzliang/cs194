@@ -7,11 +7,11 @@
 template <typename T>
 class ConjugateGradientSolver : public Solver<T> {
   public:
-  void static solve(Vector<T> result, string matrix, string vector) {
+  void static solve(Vector<T> &result, string matrix, string vector) {
     solve(result, matrix, vector, DEFAULT_TOLERANCE);
   }
 
-  void static solve(Vector<T> result, string matrix, string vector, float tolerance) {
+  void static solve(Vector<T> &result, string matrix, string vector, float tolerance) {
     ArrayVector<T> av;
     av.readFromMatrixMarketFile("../vector.txt.mtx");
     SparseHashedMatrix<T> shm;
@@ -20,12 +20,12 @@ class ConjugateGradientSolver : public Solver<T> {
     solve(result, shm, av, tolerance);
   }
 
-  void static solve(Vector<T> result, Matrix<T> matrix, Vector<T> vector) {
+  void static solve(Vector<T> &result, Matrix<T> &matrix, Vector<T> &vector) {
     solve(result, matrix, vector, DEFAULT_TOLERANCE);
   }
 
   // note: x = result
-  void static solve(Vector<T> x, Matrix<T> A, Vector<T> b, float tolerance) {
+  void static solve(Vector<T> &x, Matrix<T> &A, Vector<T> &b, float tolerance) {
     ArrayVector<T> r(b.getSize());
     ArrayVector<T> y(b.getSize());
     ArrayVector<T> z(b.getSize());
