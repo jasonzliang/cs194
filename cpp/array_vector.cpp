@@ -1,5 +1,5 @@
 #include "vector.h"
-#include "printable_element_container.h"
+#include "matrix_market_handler.h"
 #include <iostream>
 #include <malloc.h>
 #include <fstream>
@@ -114,6 +114,18 @@ class ArrayVector : public Vector<T> {
       cout << values[i];
     }
     cout << endl;
+  }
+
+  void readFromMatrixMarketFile(string fileName) {
+    string line;
+    ifstream mmFile (fileName.c_str());
+    
+    if (mmFile.is_open()) {
+      while (mmFile.good()) {
+	getline(mmFile, line);
+	cout << line << endl;	
+      }
+    }
   }
 
 };

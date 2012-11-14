@@ -1,14 +1,14 @@
 #ifndef MATRIX_H
 #define MATRIX_H
 
-#include "printable_element_container.h"
+#include "matrix_market_handler.h"
 #include "vector.h"
 
 /**
  * An interface for matrices
  */
 template <typename T>
-class Matrix : public PrintableElementContainer {
+class Matrix : public MatrixMarketHandler {
 
   public:
   /**
