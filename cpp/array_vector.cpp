@@ -175,14 +175,6 @@ class ArrayVector : public Vector<T> {
 
       mmFile.close();
     }
-
-    // TODO : just for checking, remove later
-    cout << "First 10 values of vector:" << endl;
-    for (int i = 0; i < 10; i++) {
-      cout << values[i] << endl;
-    }
-
-
   }
 
 };
