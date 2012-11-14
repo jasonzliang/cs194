@@ -38,6 +38,12 @@ class SparseHashedMatrix : public Matrix<T> {
     }
   }
 
+  SparseHashedMatrix<T>(string fileName) {
+    M = 0;
+    N = 0;
+    readFromMatrixMarketFile(fileName);
+  }
+
   ~SparseHashedMatrix<T>() {
     delete[] values;
   }
@@ -80,12 +86,55 @@ class SparseHashedMatrix : public Matrix<T> {
   // seriously don't use this except when testing
   // with large matrices, things will go kaplooy
   void print() {
-    for (int row=0; row<getN(); row++) {
-      for (int column=0; column<getM(); column++) {
+    for (int row=0; row<10; row++) {
+      for (int column=0; column<10; column++) {
 	cout << " " << getValue(column, row);
       }
       cout << endl;
     }
   }
+
+  void readFromMatrixMarketFile(string fileName) {
+    int row, col;
+    T val; // really this has to be double or float
+    
+    string line;
+    ifstream mmFile (fileName.c_str());
+    
+    if (mmFile.is_open()) {
+      while (mmFile.good()) {
+	getline(mmFile, line);
+	
+	if (line[0] == '%') {
+	  continue;
+	}
+
+	std::stringstream lineStream(line);
+	
+	lineStream >> row >> col  >> val;
+	
+       
+	if (M == 0 && N == 0) { // not allocated yet
+	  M = row;
+	  N = col;
+	  values = new map<int, T>[N];
+	  cout << "Matrix size: " << M << ", " << N << endl;
+
+	  continue;
+	}
+	
+	// Not too sure if I should swap row with col
+	setValue(col, row, val);
+
+	// TODO : remove. for checking only
+	cout << "Setting val: col " << col << ", row" << row << " val " << val << endl;
+	cout << getValue(col, row) << endl;
+      }
+
+      mmFile.close();
+    }
+
+  }
+
 
 };

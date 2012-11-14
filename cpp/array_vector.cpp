@@ -2,8 +2,7 @@
 #include "matrix_market_handler.h"
 #include <iostream>
 #include <malloc.h>
-#include <fstream>
-#include <sstream>
+
 
 using namespace std;
 
@@ -152,7 +151,6 @@ class ArrayVector : public Vector<T> {
     string line;
     ifstream mmFile (fileName.c_str());
     
-    int i = 0;
     if (mmFile.is_open()) {
       while (mmFile.good()) {
 	getline(mmFile, line);
