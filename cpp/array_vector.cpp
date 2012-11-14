@@ -93,17 +93,27 @@ class ArrayVector : public Vector<T> {
 
   void printToMatrixMarketFile(string fileName) {
     // TODO: implement properly
+    int numEntries = 0;
+    
+    for (int i = 0; i < getSize(); i++) {
+      if (getValue(i) != 0.0) {
+	numEntries++;
+      }
+    }
+
     ofstream mmFile (fileName.c_str());
 
     if (mmFile.is_open()) {
-      // this is just for testing...
+      
+      mmFile << "%%MatrixMarket matrix coordinate real general" << endl;
+      mmFile << "%" << endl;
+      mmFile << "1" << " " << getSize() << " " <<numEntries << endl;
+      
       for (int i=0; i<getSize(); i++) {
-	if (i > 0) {
-	  mmFile << ", ";
+	if (getValue(i) != 0) {
+	  mmFile << "1" << " " << i << " " << getValue(i) << endl;
 	}
-	mmFile << values[i];
       }
-      mmFile << endl;
       
       mmFile.close();
     } else {

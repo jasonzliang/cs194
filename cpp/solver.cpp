@@ -11,7 +11,7 @@ int main(int argc, char **argv) {
   cout << "Hello World!" << endl;
 
   // test reading file - should print in console
-  ArrayVector<float> avRead("../vector.txt.mtx");
+  ArrayVector<double> avRead("../vector.txt.mtx");
 
   SparseHashedMatrix<int> shm(5, 5);
   shm.setValue(0, 0, 2);
@@ -24,6 +24,7 @@ int main(int argc, char **argv) {
   mult.setValue(3, 4);
   mult.setValue(4, 5);
   mult.print();
+  mult.printToMatrixMarketFile("testout.txt");
   ArrayVector<int> res(5);
   shm.multiply(mult, res);
   res.print();
