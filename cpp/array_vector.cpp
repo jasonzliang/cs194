@@ -6,10 +6,11 @@
 using namespace std;
 
 template <typename T>
-class ArrayVector : Vector<T> {
+class ArrayVector : public Vector<T> {
   private:
   T *values;
   int size;
+  ArrayVector<T>() {}
 
   public:
   ArrayVector<T>(int s) {
@@ -25,7 +26,9 @@ class ArrayVector : Vector<T> {
   }
 
   ~ArrayVector<T>() {
-    free(values);
+    cout << "freedom!  ";
+    printToMatrixMarketFile("blah");
+    delete[] values;
   }
 
   int getSize() const {
@@ -43,20 +46,20 @@ class ArrayVector : Vector<T> {
   T dotProduct(Vector<T> &v2) const {
     T temp;
     for (int i=0; i<getSize(); i++) {
-      temp += getValue(i) * v2.getValue(i);
+      temp += values[i] * v2[i];
     }
     return temp;
   }
 
   void increaseBy(Vector<T> &v2) {
     for (int i=0; i<getSize(); i++) {
-      values[i] += v2.getValue(i);
+      values[i] += v2[i];
     }
   }
 
   void reduceBy(Vector<T> &v2) {
     for (int i=0; i<getSize(); i++) {
-      values[i] -=  v2.getValue(i);
+      values[i] -=  v2[i];
     }
   }
 
@@ -69,7 +72,7 @@ class ArrayVector : Vector<T> {
   const ArrayVector<T> operator+(const Vector<T> &v2) const {
     ArrayVector<T> result(getSize());
     for (int i=0; i<getSize(); i++) {
-      result.setValue(i, values[i] + v2.getValue(i));
+      result.setValue(i, values[i] + v2[i]);
     }
     return result;
   }
@@ -77,12 +80,12 @@ class ArrayVector : Vector<T> {
   const ArrayVector<T> operator-(const Vector<T> &v2) const {
     ArrayVector<T> result(getSize());
     for (int i=0; i<getSize(); i++) {
-      result.setValue(i, values[i] - v2.getValue(i));
+      result.setValue(i, values[i] - v2[i]);
     }
     return result;
   }
 
-  const Vector<T> operator*(const T s) const {
+  const ArrayVector<T> operator*(const T s) const {
     ArrayVector<T> result(getSize());
     for (int i=0; i<getSize(); i++) {
       result.setValue(i, values[i] * s);
@@ -95,7 +98,12 @@ class ArrayVector : Vector<T> {
 
     // this is just for testing...
     for (int i=0; i<getSize(); i++) {
-      cout << i << ": " << values[i] << endl;
+      if (i > 0) {
+	cout << ", ";
+      }
+      cout << values[i];
     }
+    cout << endl;
   }
+
 };

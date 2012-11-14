@@ -77,7 +77,7 @@ class Vector : PrintableElementContainer {
    */
   //virtual Vector<T> & operator*(const T) const = 0;
 
-  T & operator[](int i) {
+  const T operator[](const int i) const {
     return getValue(i);
   }
 };
