@@ -4,10 +4,13 @@
 #include "vector.h"
 #include "matrix.h"
 
-class solver {
-  
-
-  
+template <typename T>
+class Solver {
+  public:
+  void static solve(Vector<T> result, string, string);
+  void static solve(Vector<T> result, string, string, float);
+  void static solve(Vector<T> result, Matrix<T>, Vector<T>);
+  void static solve(Vector<T> result, Matrix<T>, Vector<T>, float);  
 };
 
 #endif

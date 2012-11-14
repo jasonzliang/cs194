@@ -13,9 +13,12 @@ class SparseHashedMatrix : public Matrix<T> {
   map<int, T> *values;
   int M;
   int N;
-  SparseHashedMatrix<T>() {}
 
   public:
+  SparseHashedMatrix<T>() {
+    this(0, 0);
+  }
+
   SparseHashedMatrix<T>(int m, int n) {
     M = m;
     N = n;

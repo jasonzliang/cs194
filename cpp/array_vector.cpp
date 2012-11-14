@@ -11,9 +11,12 @@ class ArrayVector : public Vector<T> {
   private:
   T *values;
   int size;
-  ArrayVector<T>() {}
 
   public:
+  ArrayVector<T>() {
+    this(0);
+  }
+
   ArrayVector<T>(int s) {
     size = s;
     values = new T[size];
@@ -28,6 +31,12 @@ class ArrayVector : public Vector<T> {
 
   ~ArrayVector<T>() {
     delete[] values;
+  }
+
+  void resizeVector(int newSize) {
+    delete[] values;
+    size = newSize;
+    values = new T[newSize];
   }
 
   int getSize() const {

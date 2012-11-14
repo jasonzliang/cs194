@@ -17,6 +17,12 @@ class Vector : MatrixMarketHandler {
   virtual ~Vector() {}
 
   /**
+   * destructively resize this vector
+   * previous values are not saved
+   */
+  virtual void resizeVector(int) = 0;
+
+  /**
    * @return the size of this vector
    */
   virtual int getSize() const = 0;
