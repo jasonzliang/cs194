@@ -3,7 +3,6 @@
 #include <iostream>
 #include <malloc.h>
 
-
 using namespace std;
 
 template <typename T>
@@ -104,7 +103,6 @@ class ArrayVector : public Vector<T> {
   }
 
   void printToMatrixMarketFile(string fileName) {
-    // TODO: implement properly
     unsigned int numEntries = 0;
     
     for (unsigned int i = 0; i < getSize(); i++) {
@@ -119,7 +117,7 @@ class ArrayVector : public Vector<T> {
       
       mmFile << "%%MatrixMarket matrix coordinate real general" << endl;
       mmFile << "%" << endl;
-      mmFile << "1" << " " << getSize() << " " <<numEntries << endl;
+      mmFile << "1" << " " << getSize()-1 << " " <<numEntries << endl;
       
       for (unsigned int i=0; i<getSize(); i++) {
 	if (getValue(i) != 0) {

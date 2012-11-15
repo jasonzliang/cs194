@@ -80,7 +80,33 @@ class SparseHashedMatrix : public Matrix<T> {
   }
 
   void printToMatrixMarketFile(string fileName) {
-    // TODO: implement
+    unsigned int numEntries = 0;
+
+    typename map<unsigned int, T>::iterator itr;
+
+    for (unsigned int row=0; row<getN(); row++) {
+      for (itr = values[row].begin(); itr != values[row].end(); ++itr) {
+	numEntries++;
+      }
+    }
+
+    ofstream mmFile (fileName.c_str());
+
+    if (mmFile.is_open()) {
+      mmFile << "%%MatrixMarket matrix coordinate real general" << endl;
+      mmFile << "%" << endl;
+      mmFile << getM()-1 << " " << getN()-1 << " " << numEntries << endl;
+
+      for (unsigned int row=0; row<getN(); row++) {
+	for (itr = values[row].begin(); itr != values[row].end(); ++itr) {
+	  mmFile << row << " " << itr->first << " " << itr->second << endl;
+	}
+      }
+
+      mmFile.close();
+    } else {
+      cout << "Problem writing matrix market file" << endl;
+    }
   }
 
   // seriously don't use this except when testing
