@@ -20,22 +20,22 @@ class Vector : MatrixMarketHandler {
    * destructively resize this vector
    * previous values are not saved
    */
-  virtual void resizeVector(int) = 0;
+  virtual void resizeVector(unsigned int) = 0;
 
   /**
    * @return the size of this vector
    */
-  virtual int getSize() const = 0;
+  virtual unsigned int getSize() const = 0;
 
   /**
    * @return the element at the given index
    */
-  virtual T getValue(int) const = 0;
+  virtual T getValue(unsigned int) const = 0;
 
   /**
    * set the element at the given index (int) to the given value (T)
    */
-  virtual void setValue(int, T) = 0;
+  virtual void setValue(unsigned int, T) = 0;
 
   /**
    * @return the scalar dot product of this and the argument Vector
@@ -83,7 +83,7 @@ class Vector : MatrixMarketHandler {
    */
   virtual void multiply(const T, Vector<T> &result) const = 0;
 
-  const T operator[](const int i) const {
+  const T operator[](const unsigned int i) const {
     return getValue(i);
   }
 };

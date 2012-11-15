@@ -20,22 +20,22 @@ class Matrix : public MatrixMarketHandler {
   /**
    * @return the number of horizontal elements
    */
-  virtual int getM() const = 0;
+  virtual unsigned int getM() const = 0;
 
   /**
    * @return the number of vertical elements
    */
-  virtual int getN() const = 0;
+  virtual unsigned int getN() const = 0;
 
   /**
    * @return the element at the given index
    */
-  virtual T getValue(int column, int row) const = 0;
+  virtual T getValue(unsigned int column, unsigned int row) const = 0;
 
   /**
    * set the element at the given index (int) to the given value (T)
    */
-  virtual void setValue(int column, int row, T value) = 0;
+  virtual void setValue(unsigned int column, unsigned int row, T value) = 0;
 
   /**
    * result = (this matrix) * v

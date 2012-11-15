@@ -48,6 +48,25 @@ class ConjugateGradientSolver : public Solver<T> {
     y.multiply(t, x);
     x.reduceBy(b);
 
+    /*
+    cout << "before iterations: " << endl;
+    cout << "A: ";
+    A.print();
+    cout << "b: ";
+    b.print();
+    cout << "r: ";
+    r.print();
+    cout << "y: ";
+    y.print();
+    cout << "z: ";
+    z.print();
+    cout << "s: " << s << endl;
+    cout << "r.y: " << r.dotProduct(y) << endl;
+    cout << "t = r.y / s: " << t << endl;
+    cout << "x: ";
+    x.print();
+    */
+
     //for k = 1:numel(b);
     int maxIters = b.getSize();
     for (int k=0; k<maxIters; k++) {

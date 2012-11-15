@@ -10,9 +10,9 @@ using namespace std;
 template <typename T>
 class SparseHashedMatrix : public Matrix<T> {
   private:
-  map<int, T> *values;
-  int M;
-  int N;
+  map<unsigned int, T> *values;
+  unsigned int M;
+  unsigned int N;
 
   public:
   SparseHashedMatrix<T>() {
@@ -20,18 +20,18 @@ class SparseHashedMatrix : public Matrix<T> {
     N = 0;
   }
 
-  SparseHashedMatrix<T>(int m, int n) {
+  SparseHashedMatrix<T>(unsigned int m, unsigned int n) {
     M = m;
     N = n;
-    values = new map<int, T>[N];
+    values = new map<unsigned int, T>[N];
   }
 
   SparseHashedMatrix<T>(const SparseHashedMatrix<T> &m2) {
     M = m2.getM();
     N = m2.getN();
 
-    typename map<int, T>::iterator itr;
-    for (int row=0; row<getN(); row++) {
+    typename map<unsigned int, T>::iterator itr;
+    for (unsigned int row=0; row<getN(); row++) {
       for (itr = m2.values[row].begin(); itr != m2.values[row].end(); ++itr) {
 	setValue(itr->first, row, itr->second);
       }
@@ -48,15 +48,15 @@ class SparseHashedMatrix : public Matrix<T> {
     delete[] values;
   }
 
-  int getM() const {
+  unsigned int getM() const {
     return M;
   }
 
-  int getN() const {
+  unsigned int getN() const {
     return N;
   }
 
-  T getValue(int column, int row) const {
+  T getValue(unsigned int column, unsigned int row) const {
     if (values[row].find(column) == values[row].end()) {
       return 0;
     } else {
@@ -64,13 +64,13 @@ class SparseHashedMatrix : public Matrix<T> {
     }
   }
 
-  void setValue(int column, int row, T value) {
+  void setValue(unsigned int column, unsigned int row, T value) {
     values[row][column] = value;
   }
 
   void multiply(Vector<T> &v, Vector<T> &result) const {
-    typename map<int, T>::iterator itr;
-    for (int row=0; row<getN(); row++) {
+    typename map<unsigned int, T>::iterator itr;
+    for (unsigned int row=0; row<getN(); row++) {
       T temp = 0;
       for (itr = values[row].begin(); itr != values[row].end(); ++itr) {
 	temp += v.getValue(itr->first) * itr->second;
@@ -86,8 +86,8 @@ class SparseHashedMatrix : public Matrix<T> {
   // seriously don't use this except when testing
   // with large matrices, things will go kaplooy
   void print() {
-    for (int row=0; row<10; row++) {
-      for (int column=0; column<10; column++) {
+    for (unsigned int row=0; row<getN(); row++) {
+      for (unsigned int column=0; column<getM(); column++) {
 	cout << " " << getValue(column, row);
       }
       cout << endl;
@@ -95,7 +95,7 @@ class SparseHashedMatrix : public Matrix<T> {
   }
 
   void readFromMatrixMarketFile(string fileName) {
-    int row, col;
+    unsigned int row, col;
     T val; // really this has to be double or float
     
     string line;
@@ -117,7 +117,7 @@ class SparseHashedMatrix : public Matrix<T> {
 	if (M == 0 && N == 0) { // not allocated yet
 	  N = row + 1;
 	  M = col + 1;
-	  values = new map<int, T>[N];
+	  values = new map<unsigned int, T>[N];
 	  cout << "Matrix size: " << M << ", " << N << endl;
 
 	  continue;

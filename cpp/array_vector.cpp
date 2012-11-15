@@ -11,7 +11,7 @@ class ArrayVector : public Vector<T> {
   private:
   T *values;
   unsigned int size;
-  void init(int s) {
+  void init(unsigned int s) {
     size = s;
     values = new T[size];
   }
@@ -21,7 +21,7 @@ class ArrayVector : public Vector<T> {
     init(0);
   }
 
-  ArrayVector<T>(int s) {
+  ArrayVector<T>(unsigned int s) {
     init(s);
   }
 
@@ -33,7 +33,7 @@ class ArrayVector : public Vector<T> {
   ArrayVector<T>(const ArrayVector<T> &v2) {
     init(v2.getSize());
 
-    for (int i=0; i<v2.getSize(); i++) {
+    for (unsigned int i=0; i<v2.getSize(); i++) {
       values[i] = v2.values[i];
     }
   }
@@ -42,73 +42,72 @@ class ArrayVector : public Vector<T> {
     delete[] values;
   }
 
-  void resizeVector(int newSize) {
+  void resizeVector(unsigned int newSize) {
     delete[] values;
-    size = newSize;
-    values = new T[newSize];
+    init(newSize);
   }
 
-  int getSize() const {
+  unsigned int getSize() const {
     return size;
   }
 
-  T getValue(int i) const {
+  T getValue(unsigned int i) const {
     return values[i];
   }
 
-  void setValue(int i, T value) {
+  void setValue(unsigned int i, T value) {
     values[i] = value;
   }
 
   T dotProduct(const Vector<T> &v2) const {
-    T temp;
-    for (int i=0; i<getSize(); i++) {
+    T temp = 0.0;
+    for (unsigned int i=0; i<getSize(); i++) {
       temp += values[i] * v2[i];
     }
     return temp;
   }
 
   void increaseBy(Vector<T> &v2) {
-    for (int i=0; i<getSize(); i++) {
+    for (unsigned int i=0; i<getSize(); i++) {
       values[i] += v2[i];
     }
   }
 
   void reduceBy(Vector<T> &v2) {
-    for (int i=0; i<getSize(); i++) {
+    for (unsigned int i=0; i<getSize(); i++) {
       values[i] -=  v2[i];
     }
   }
 
   void scaleBy(T s) {
-    for (int i=0; i<getSize(); i++) {
+    for (unsigned int i=0; i<getSize(); i++) {
       values[i] *= s;
     }
   }
 
   void add(const Vector<T> &v2, Vector<T> &result) const {
-    for (int i=0; i<getSize(); i++) {
+    for (unsigned int i=0; i<getSize(); i++) {
       result.setValue(i, values[i] + v2[i]);
     }
   }
 
   void subtract(const Vector<T> &v2, Vector<T> &result) const {
-    for (int i=0; i<getSize(); i++) {
+    for (unsigned int i=0; i<getSize(); i++) {
       result.setValue(i, values[i] - v2[i]);
     }
   }
 
   void multiply(const T s, Vector<T> &result) const {
-    for (int i=0; i<getSize(); i++) {
+    for (unsigned int i=0; i<getSize(); i++) {
       result.setValue(i, values[i] * s);
     }
   }
 
   void printToMatrixMarketFile(string fileName) {
     // TODO: implement properly
-    int numEntries = 0;
+    unsigned int numEntries = 0;
     
-    for (int i = 0; i < getSize(); i++) {
+    for (unsigned int i = 0; i < getSize(); i++) {
       if (getValue(i) != 0.0) {
 	numEntries++;
       }
@@ -122,7 +121,7 @@ class ArrayVector : public Vector<T> {
       mmFile << "%" << endl;
       mmFile << "1" << " " << getSize() << " " <<numEntries << endl;
       
-      for (int i=0; i<getSize(); i++) {
+      for (unsigned int i=0; i<getSize(); i++) {
 	if (getValue(i) != 0) {
 	  mmFile << "1" << " " << i << " " << getValue(i) << endl;
 	}
@@ -135,7 +134,7 @@ class ArrayVector : public Vector<T> {
   }
 
   void print() {
-    for (int i=0; i<getSize(); i++) {
+    for (unsigned int i=0; i<getSize(); i++) {
       if (i > 0) {
 	cout << ", ";
       }
@@ -145,7 +144,7 @@ class ArrayVector : public Vector<T> {
   }
 
   void readFromMatrixMarketFile(string fileName) {
-    int row, col;
+    unsigned int row, col;
     T val; // really this has to be double or float
 
     string line;
