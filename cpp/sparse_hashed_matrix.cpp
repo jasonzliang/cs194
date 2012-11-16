@@ -4,6 +4,7 @@
 #include <iostream>
 #include <map>
 #include <iterator>
+#include <omp.h>
 
 using namespace std;
 
@@ -69,7 +70,12 @@ class SparseHashedMatrix : public Matrix<T> {
   }
 
   void multiply(Vector<T> &v, Vector<T> &result) const {
+    //int nprocs = sysconf(_SC_NPROCESSORS_ONLN);
+    //cout << "using " << nprocs << " threads" << endl;
+    //omp_set_num_threads(nprocs);
+
     typename map<unsigned int, T>::iterator itr;
+    //#pragma omp parallel for
     for (unsigned int row=0; row<getN(); row++) {
       T temp = 0;
       for (itr = values[row].begin(); itr != values[row].end(); ++itr) {
