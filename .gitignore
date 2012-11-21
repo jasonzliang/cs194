@@ -19,3 +19,4 @@
 # executables should not be checked in
 cpp/solver
 cpp/driver
+newcpp/newsolver
