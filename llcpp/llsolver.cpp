@@ -4,6 +4,7 @@
 #include <cmath>
 #include <fstream>
 #include <sstream>
+#include <ctime>
 
 using namespace std;
 //template <typename T>
@@ -332,8 +333,6 @@ void solve(array_vector *x, sm* A, array_vector *b, float tolerance) {
 	double s;
 	double t;
 
-	//cout << "check1" << endl;
-
 	array_vector* temp = new array_vector;
 	resizeVector(temp, b->size);
 
@@ -367,17 +366,27 @@ void solve(array_vector *x, sm* A, array_vector *b, float tolerance) {
 }
 
 int main(int argc, char **argv) {
-
+	time_t start_time = 0.0;
+	start_time = time(NULL);
 	array_vector* myVec = readFromMatrixMarketFile_arrayVector("../vector.txt.mtx");
 	sm* myMat = readFromMatrixMarketFile_sm("../matrix.txt.mtx");
-	cout << "Done reading" << endl;
+	time_t time_read = time(NULL) - start_time;
 
 	array_vector* result = new array_vector;
 	resizeVector(result, myVec->size);
 
+	start_time = time(NULL);
 	solve(result, myMat, myVec, DEFAULT_TOLERANCE);
+	time_t time_solve = time(NULL) - start_time;
 
+	start_time = time(NULL);
 	printToMatrixMarketFile("llsolver_result.mtx.txt", result);
+	time_t time_write = time(NULL) - start_time;
+
+	// time stats
+	cout << "Time to read: " << time_read << " [s]" << endl;
+	cout << "Time to solve: " << time_solve << " [s]" << endl;
+	cout << "Time to write: " << time_write << " [s]" << endl;
 
 	return 0;
 }

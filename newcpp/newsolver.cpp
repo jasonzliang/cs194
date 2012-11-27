@@ -297,16 +297,27 @@ void solve(array_vector *x, shm* A, array_vector *b, float tolerance) {
 }
 
 int main(int argc, char **argv) {
-
+	time_t start_time = 0.0;
+	start_time = time(NULL);
 	array_vector* myVec = readFromMatrixMarketFile_arrayVector("../vector.txt.mtx");
 	shm* myMat = readFromMatrixMarketFile_shm("../matrix.txt.mtx");
+	time_t time_read = time(NULL) - start_time;
 
-  array_vector* result = new array_vector;
+	array_vector* result = new array_vector;
 	resizeVector(result, myVec->size);
 
+	start_time = time(NULL);
 	solve(result, myMat, myVec, DEFAULT_TOLERANCE);
+	time_t time_solve = time(NULL) - start_time;
 
-  printToMatrixMarketFile("newsolver_result.mtx.txt", result);
+	start_time = time(NULL);
+	printToMatrixMarketFile("newsolver_result.mtx.txt", result);
+	time_t time_write = time(NULL) - start_time;
 
-  return 0;
+	// time stats
+	cout << "Time to read: " << time_read << " [s]" << endl;
+	cout << "Time to solve: " << time_solve << " [s]" << endl;
+	cout << "Time to write: " << time_write << " [s]" << endl;
+
+	return 0;
 }
