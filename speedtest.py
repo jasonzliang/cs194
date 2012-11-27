@@ -16,10 +16,12 @@ if __name__ == "__main__":
   
   legend = ['numcores']
   i=1
-  while i < numcores:
+  while i <= numcores:
     legend.append(str(i))
     i *= 2
     
+  print legend
+  
   objlist = []
   newlist = []
   lllist = []
@@ -30,11 +32,11 @@ if __name__ == "__main__":
   os.chdir('cpp')
   for i in legend[1:]:
     i = int(i)
-    os.system("./driver " + str(i+1) + " 1 >> temp.txt")
+    os.system("./driver " + str(i) + " 1 >> temp.txt")
     t = str(readtemp())
     os.system("rm temp.txt")
     objlist.append(t)
-    print str(i+1) + " cores: " + t
+    print str(i) + " cores: " + t
   os.chdir('..')
   
   print "Running Tests for newsolver (uses map): "
@@ -42,11 +44,11 @@ if __name__ == "__main__":
   os.chdir('newcpp')
   for i in legend[1:]:
     i = int(i)
-    os.system("./newsolver " + str(i+1) + " 1 >> temp.txt")
+    os.system("./newsolver " + str(i) + " 1 >> temp.txt")
     t = str(readtemp())
     os.system("rm temp.txt")
     newlist.append(t)
-    print str(i+1) + " cores: " + t
+    print str(i) + " cores: " + t
   os.chdir('..')
     
   print "Running Tests for llsolver with Linked Lists: "
@@ -54,11 +56,11 @@ if __name__ == "__main__":
   os.chdir('llcpp')
   for i in legend[1:]:
     i = int(i)
-    os.system("./llsolver " + str(i+1) + " 1 >> temp.txt")
+    os.system("./llsolver " + str(i) + " 1 >> temp.txt")
     t = str(readtemp())
     os.system("rm temp.txt")
     lllist.append(t)
-    print str(i+1) + " cores: " + t
+    print str(i) + " cores: " + t
   os.chdir('..')
   
   print "Running Tests for llsolver with Optimized Linked Lists: "
@@ -66,11 +68,11 @@ if __name__ == "__main__":
   os.chdir('llcpp-optimized')
   for i in legend[1:]:
     i = int(i)
-    os.system("./llsolver " + str(i+1) + " 1 >> temp.txt")
+    os.system("./llsolver " + str(i) + " 1 >> temp.txt")
     t = str(readtemp())
     os.system("rm temp.txt")
     newlllist.append(t)
-    print str(i+1) + " cores: " + t
+    print str(i) + " cores: " + t
   os.chdir('..')
   
   with open('speedtest.csv', 'wb') as csvfile:
