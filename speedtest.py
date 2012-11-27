@@ -20,9 +20,22 @@ if __name__ == "__main__":
     legend.append(str(i))
     i *= 2
     
+  objlist = []
   newlist = []
   lllist = []
   newlllist = []
+  
+  print "Running Tests for solver with objects: "
+  objlist.append('object-solver')
+  os.chdir('cpp')
+  for i in legend[1:]:
+    i = str(i)
+    os.system("./driver " + str(i+1) + " 1 >> temp.txt")
+    t = str(readtemp())
+    os.system("rm temp.txt")
+    objlist.append(t)
+    print str(i+1) + " cores: " + t
+  os.chdir('..')
   
   print "Running Tests for newsolver (uses map): "
   newlist.append('newsolver')
@@ -63,6 +76,7 @@ if __name__ == "__main__":
   with open('speedtest.csv', 'wb') as csvfile:
     spamwriter = csv.writer(csvfile, delimiter=',')
     spamwriter.writerow(legend)
+    spamwriter.writerow(objlist)
     spamwriter.writerow(newlist)
     spamwriter.writerow(lllist)
     spamwriter.writerow(newlllist)
