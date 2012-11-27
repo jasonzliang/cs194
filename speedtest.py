@@ -6,7 +6,7 @@ def readtemp(filename):
   f = open(filename, 'rb')
   for line in f:
     if line.find("Time to solve:") != -1:
-      time = int(line[15:17])
+      time = int(line[15:-4])
       break;
   return time
 
