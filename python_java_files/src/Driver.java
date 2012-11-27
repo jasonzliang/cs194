@@ -43,15 +43,15 @@ public class Driver {
 				ExecutorServiceProvider.setNumConcurrentThreads(threads);
 			}
 		}
+		System.out.println("Num threads: " + ExecutorServiceProvider.getNumConcurrentThreads());
 
-		Matrix A = Driver.readMatrixFile("matrix.txt.mtx");
-		Vector b = Driver.readVectorFile("vector.txt.mtx");
+		Matrix A = Driver.readMatrixFile("../matrix.txt.mtx");
+		Vector b = Driver.readVectorFile("../vector.txt.mtx");
 		long start = System.nanoTime();
 		Vector solution = ConjugateGradientSolver.solve(A, b);
 		double time = ((double) (System.nanoTime() - start))/1000000000;
 		
 		System.out.println(time);
-		System.out.println("Num threads: " + ExecutorServiceProvider.getNumConcurrentThreads());
 		
 		solution.printToMatrixMarketFile("java_solution", true);
 	}
