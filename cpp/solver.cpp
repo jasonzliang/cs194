@@ -28,7 +28,7 @@ int main(int argc, char **argv) {
   mult.print();
   mult.printToMatrixMarketFile("testout.txt");
   ArrayVector<int> res(5);
-  shm.multiply(mult, res);
+  shm.multiply(mult, res, sysconf(_SC_NPROCESSORS_ONLN));
   res.print();
 
   return 0;

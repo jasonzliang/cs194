@@ -40,7 +40,7 @@ class Matrix : public MatrixMarketHandler {
   /**
    * result = (this matrix) * v
    */
-  virtual void multiply(Vector<T> &, Vector<T> &result) const = 0;
+  virtual void multiply(Vector<T> &, Vector<T> &result, int numThreads) const = 0;
 };
 
 #endif
