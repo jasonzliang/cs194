@@ -20,8 +20,9 @@ if __name__ == "__main__":
     
   newlist = []
   lllist = []
+  newlllist = []
   
-  print "Running Tests for newsolver: "
+  print "Running Tests for newsolver (uses map): "
   newlist.append('newsolver')
   os.chdir('newcpp')
   for i in xrange(numcores):
@@ -43,11 +44,23 @@ if __name__ == "__main__":
     print str(i+1) + " cores: " + str(t)
   os.chdir('..')
   
+  print "Running Tests for llsolver with Optimized Linked Lists: "
+  newlllist.append('opt-llsolver')
+  os.chdir('llcpp-optimized')
+  for i in xrange(numcores):
+    os.system("./llsolver " + str(i+1) + " 1 >> temp.txt")
+    t = readtemp()
+    os.system("rm temp.txt")
+    newlllist.append(t)
+    print str(i+1) + " cores: " + str(t)
+  os.chdir('..')
+  
   with open('speedtest.csv', 'wb') as csvfile:
     spamwriter = csv.writer(csvfile, delimiter=',')
     spamwriter.writerow(legend)
     spamwriter.writerow(newlist)
     spamwriter.writerow(lllist)
+    spamwriter.writerow(newlllist)
   
   print "Finished Writing to File!"
   
