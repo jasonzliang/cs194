@@ -5,9 +5,12 @@
 #include <cmath>
 #include <fstream>
 #include <sstream>
+#include <ctime>
+#include <cstdlib>
 
 using namespace std;
-//template <typename T>
+
+int nthreads;
 
 #define DEFAULT_TOLERANCE 1e-6
 
@@ -148,8 +151,7 @@ void printToMatrixMarketFile(string fileName, array_vector* myArrayVector) {
 /* matrix operations --------------------------------------*/
 
 void multiply(const shm* myMat, const array_vector* myVec, array_vector* result) {
-	int nprocs = sysconf(_SC_NPROCESSORS_ONLN);
-	omp_set_num_threads(nprocs);
+	omp_set_num_threads(nthreads);
 
 	//cout << "check2" << endl;
 	typename map<unsigned int, double>::iterator itr;
@@ -249,7 +251,7 @@ void printToMatrixMarketFile(string fileName, shm* myShm) {
 
 /* solver -------------------------------------------------*/
 
-void solve(array_vector *x, shm* A, array_vector *b, float tolerance) {
+void solve(array_vector *x, shm* A, array_vector *b, float tolerance, bool verbose) {
 	array_vector* r = new array_vector;
 	resizeVector(r, b->size);
 
@@ -281,7 +283,10 @@ void solve(array_vector *x, shm* A, array_vector *b, float tolerance) {
 		multiply(z, t, temp);
 		reduceBy(r, temp);
 
-		cout << "Residual (" << k << "/" << maxIters << "): " << norm(r) << endl;
+		if (verbose) {
+			cout << "Residual (" << k << "/" << maxIters << "): " << norm(r) << endl;
+		}
+
 		if (norm(r) < tolerance) {
 			break;
 		}
@@ -297,6 +302,13 @@ void solve(array_vector *x, shm* A, array_vector *b, float tolerance) {
 }
 
 int main(int argc, char **argv) {
+
+	nthreads = sysconf(_SC_NPROCESSORS_ONLN);
+	if (argc > 1) {
+	  nthreads = atoi(argv[1]);
+	}
+	cout << "Used " << nthreads << " threads" << endl;
+
 	time_t start_time = 0.0;
 	start_time = time(NULL);
 	array_vector* myVec = readFromMatrixMarketFile_arrayVector("../vector.txt.mtx");
@@ -307,7 +319,7 @@ int main(int argc, char **argv) {
 	resizeVector(result, myVec->size);
 
 	start_time = time(NULL);
-	solve(result, myMat, myVec, DEFAULT_TOLERANCE);
+	solve(result, myMat, myVec, DEFAULT_TOLERANCE, !(argc > 2));
 	time_t time_solve = time(NULL) - start_time;
 
 	start_time = time(NULL);
