@@ -69,10 +69,8 @@ public:
 		values[row][column] = value;
 	}
 
-	void multiply(Vector<T> &v, Vector<T> &result) const {
-		int nprocs = sysconf(_SC_NPROCESSORS_ONLN);
-		//cout << "using " << nprocs << " threads" << endl;
-		omp_set_num_threads(nprocs);
+	void multiply(Vector<T> &v, Vector<T> &result, int numThreads) const {
+		omp_set_num_threads(numThreads);
 
 		typename map<unsigned int, T>::iterator itr;
 		#pragma omp parallel for private(itr) // probably should use blocking

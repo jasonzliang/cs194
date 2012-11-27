@@ -7,10 +7,10 @@
 template <typename T>
 class Solver {
   public:
-  void static solve(Vector<T> result, string, string);
-  void static solve(Vector<T> result, string, string, float);
-  void static solve(Vector<T> result, Matrix<T>, Vector<T>);
-  void static solve(Vector<T> result, Matrix<T>, Vector<T>, float);  
+  void static solve(Vector<T> result, string, string, int, bool);
+  void static solve(Vector<T> result, string, string, float, int, bool);
+  void static solve(Vector<T> result, Matrix<T>, Vector<T>, int, bool);
+  void static solve(Vector<T> result, Matrix<T>, Vector<T>, float, int, bool);  
 };
 
 #endif
