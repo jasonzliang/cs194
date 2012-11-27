@@ -33,6 +33,7 @@ if __name__ == "__main__":
   for i in legend[1:]:
     filename = i+'.txt'
     i = int(i)
+    os.sytem("rm " + filename)
     os.system("./driver " + str(i) + " 1 >> " + filename)
     t = str(readtemp(filename))
     objlist.append(t)
@@ -45,6 +46,7 @@ if __name__ == "__main__":
   for i in legend[1:]:
     filename = i+'.txt'
     i = int(i)
+    os.sytem("rm " + filename)
     os.system("./newsolver " + str(i) + " 1 >> " + filename)
     t = str(readtemp(filename))
     newlist.append(t)
@@ -57,6 +59,7 @@ if __name__ == "__main__":
   for i in legend[1:]:
     filename = i+'.txt'
     i = int(i)
+    os.sytem("rm " + filename)
     os.system("./llsolver "  + str(i) + " 1 >> " + filename)
     t = str(readtemp(filename))
     lllist.append(t)
@@ -69,6 +72,7 @@ if __name__ == "__main__":
   for i in legend[1:]:
     filename = i+'.txt'
     i = int(i)
+    os.sytem("rm " + filename)
     os.system("./llsolver " + str(i) + " 1 >> " + filename)
     t = str(readtemp(filename))
     newlllist.append(t)
