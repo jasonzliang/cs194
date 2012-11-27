@@ -29,7 +29,7 @@ if __name__ == "__main__":
   objlist.append('object-solver')
   os.chdir('cpp')
   for i in legend[1:]:
-    i = str(i)
+    i = int(i)
     os.system("./driver " + str(i+1) + " 1 >> temp.txt")
     t = str(readtemp())
     os.system("rm temp.txt")
@@ -41,7 +41,7 @@ if __name__ == "__main__":
   newlist.append('newsolver')
   os.chdir('newcpp')
   for i in legend[1:]:
-    i = str(i)
+    i = int(i)
     os.system("./newsolver " + str(i+1) + " 1 >> temp.txt")
     t = str(readtemp())
     os.system("rm temp.txt")
@@ -53,7 +53,7 @@ if __name__ == "__main__":
   lllist.append('llsolver')
   os.chdir('llcpp')
   for i in legend[1:]:
-    i = str(i)
+    i = int(i)
     os.system("./llsolver " + str(i+1) + " 1 >> temp.txt")
     t = str(readtemp())
     os.system("rm temp.txt")
@@ -65,7 +65,7 @@ if __name__ == "__main__":
   newlllist.append('opt-llsolver')
   os.chdir('llcpp-optimized')
   for i in legend[1:]:
-    i = str(i)
+    i = int(i)
     os.system("./llsolver " + str(i+1) + " 1 >> temp.txt")
     t = str(readtemp())
     os.system("rm temp.txt")
