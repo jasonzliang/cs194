@@ -382,6 +382,7 @@ int main(int argc, char **argv) {
 	if (argc > 1) {
 	  nthreads = atoi(argv[1]);
 	}
+	cout << "Used " << nthreads << " threads" << endl;
 
 	time_t time_read = time(NULL);
 	array_vector* myVec = readFromMatrixMarketFile_arrayVector("../vector.txt.mtx");
@@ -402,7 +403,6 @@ int main(int argc, char **argv) {
 	time_full = time(NULL) - time_full;
 
 	// stats
-	cout << "Used " << nthreads << " threads" << endl;
 	cout << "Time to read: " << time_read << " [s]" << endl;
 	cout << "Time to solve: " << time_solve << " [s]" << endl;
 	cout << "Time to write: " << time_write << " [s]" << endl;
