@@ -2,8 +2,8 @@ import sys
 import csv
 import os
 
-def readtemp():
-  f = open('temp.txt', 'rb')
+def readtemp(filename):
+  f = open(filename, 'rb')
   for line in f:
     if line.find("Time to solve:") != -1:
       time = int(line[15:17])
@@ -31,10 +31,11 @@ if __name__ == "__main__":
   objlist.append('object-solver')
   os.chdir('cpp')
   for i in legend[1:]:
+    filename = i+'.txt'
     i = int(i)
-    os.system("./driver " + str(i) + " 1 >> temp.txt")
-    t = str(readtemp())
-    os.system("rm temp.txt")
+    os.system("./driver " + str(i) + " 1 >> " + filename)
+    t = str(readtemp(filename))
+    os.system("rm " + filename)
     objlist.append(t)
     print str(i) + " cores: " + t
   os.chdir('..')
@@ -43,10 +44,11 @@ if __name__ == "__main__":
   newlist.append('newsolver')
   os.chdir('newcpp')
   for i in legend[1:]:
+    filename = i+'.txt'
     i = int(i)
-    os.system("./newsolver " + str(i) + " 1 >> temp.txt")
-    t = str(readtemp())
-    os.system("rm temp.txt")
+    os.system("./newsolver " + str(i) + " 1 >> " + filename)
+    t = str(readtemp(filename))
+    os.system("rm " + filename)
     newlist.append(t)
     print str(i) + " cores: " + t
   os.chdir('..')
@@ -55,10 +57,11 @@ if __name__ == "__main__":
   lllist.append('llsolver')
   os.chdir('llcpp')
   for i in legend[1:]:
+    filename = i+'.txt'
     i = int(i)
-    os.system("./llsolver " + str(i) + " 1 >> temp.txt")
-    t = str(readtemp())
-    os.system("rm temp.txt")
+    os.system("./llsolver "  + str(i) + " 1 >> " + filename)
+    t = str(readtemp(filename))
+    os.system("rm " + filename)
     lllist.append(t)
     print str(i) + " cores: " + t
   os.chdir('..')
@@ -67,10 +70,11 @@ if __name__ == "__main__":
   newlllist.append('opt-llsolver')
   os.chdir('llcpp-optimized')
   for i in legend[1:]:
+    filename = i+'.txt'
     i = int(i)
-    os.system("./llsolver " + str(i) + " 1 >> temp.txt")
-    t = str(readtemp())
-    os.system("rm temp.txt")
+    os.system("./llsolver " + str(i) + " 1 >> " + filename)
+    t = str(readtemp(filename))
+    os.system("rm " + filename)
     newlllist.append(t)
     print str(i) + " cores: " + t
   os.chdir('..')
