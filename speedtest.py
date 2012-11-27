@@ -15,8 +15,10 @@ if __name__ == "__main__":
   print "Numcores: " + str(numcores)
   
   legend = ['numcores']
-  for i in xrange(numcores):
-    legend.append(str(i+1))
+  i=1
+  while i < numcores:
+    legend.append(str(i))
+    i *= 2
     
   newlist = []
   lllist = []
@@ -25,7 +27,8 @@ if __name__ == "__main__":
   print "Running Tests for newsolver (uses map): "
   newlist.append('newsolver')
   os.chdir('newcpp')
-  for i in xrange(numcores):
+  for i in legend[1:]:
+    i = str(i)
     os.system("./newsolver " + str(i+1) + " 1 >> temp.txt")
     t = str(readtemp())
     os.system("rm temp.txt")
@@ -36,7 +39,8 @@ if __name__ == "__main__":
   print "Running Tests for llsolver with Linked Lists: "
   lllist.append('llsolver')
   os.chdir('llcpp')
-  for i in xrange(numcores):
+  for i in legend[1:]:
+    i = str(i)
     os.system("./llsolver " + str(i+1) + " 1 >> temp.txt")
     t = str(readtemp())
     os.system("rm temp.txt")
@@ -47,7 +51,8 @@ if __name__ == "__main__":
   print "Running Tests for llsolver with Optimized Linked Lists: "
   newlllist.append('opt-llsolver')
   os.chdir('llcpp-optimized')
-  for i in xrange(numcores):
+  for i in legend[1:]:
+    i = str(i)
     os.system("./llsolver " + str(i+1) + " 1 >> temp.txt")
     t = str(readtemp())
     os.system("rm temp.txt")
