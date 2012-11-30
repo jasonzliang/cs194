@@ -226,8 +226,6 @@ int main(int argc, char **argv) {
     NDRange global(vSize);
     NDRange local(1);
 
-
-
     // SOLVER STUFF
     float tolerance = 1e-6;
 
@@ -237,6 +235,13 @@ int main(int argc, char **argv) {
     float *temp = new float[1];
     float *result1 = new float[vSize];
     float *result2 = new float[vSize];
+    s[0] = 0.0;
+    t[0] = 0.0;
+    temp[0] = 0.0;
+    for (int i=0; i<vSize; i++) {
+      result1[0] = 0.0;
+      result2[0] = 0.0;
+    }
     
     // multiply(A, b, r);
     Kernel kernel01(program, "multiply");
@@ -296,7 +301,8 @@ int main(int argc, char **argv) {
     kernel06.setArg(1, bufferB);
     queue.enqueueNDRangeKernel(kernel06, NullRange, global, local);
 
-    for (unsigned int k=0; k<vSize; k++) {
+    unsigned int maxIters = 100;//vSize
+    for (unsigned int k=0; k<maxIters; k++) {
       // multiply(z, t, temp);
       Kernel kernelL1(program, "vector_mult");
       queue.enqueueWriteBuffer(bufferTempSingleFloat, CL_TRUE, 0, sizeof(float), t);
@@ -313,11 +319,13 @@ int main(int argc, char **argv) {
 
       // if (norm(r) < tolerance) { break; }
       queue.enqueueReadBuffer(bufferR, CL_TRUE, 0, vSize * sizeof(float), result1);
-      if (norm(result1, vSize) < tolerance) { break; }
+      float res = norm(result1, vSize);
+      std::cout << "Residual (" << k << "/" << vSize << "): " << res << std::endl;
+      if (res < tolerance) { break; }
 
       // double B = dotProduct(r, z) / s;
       queue.enqueueReadBuffer(bufferZ, CL_TRUE, 0, vSize * sizeof(float), result2);
-      temp[0] = dotProduct(result1, result2, vSize);
+      temp[0] = dotProduct(result1, result2, vSize) / s[0];
 
       // scaleBy(y, B);
       Kernel kernelL3(program, "scaleBy");
@@ -364,7 +372,6 @@ int main(int argc, char **argv) {
       kernelL7.setArg(0, bufferX);
       kernelL7.setArg(1, bufferTemp);
       queue.enqueueNDRangeKernel(kernelL7, NullRange, global, local);
-
     }
  
     // Read buffer C into a local list
