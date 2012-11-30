@@ -4,10 +4,14 @@ import os
 
 def readtemp(filename):
   f = open(filename, 'rb')
+  time = 0
   for line in f:
     if line.find("Time to solve:") != -1:
-      time = int(line[15:-4])
-      break;
+      time += int(line[15:-4])
+    if line.find("Time to write:") != -1:
+      time += int(line[15:-4])
+    if line.find("Time to read:") != -1:
+      time += int(line[14:-4])
   return time
 
 if __name__ == "__main__":
