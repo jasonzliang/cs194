@@ -39,7 +39,7 @@ if __name__ == "__main__":
       os.system("rm " + filename)
       os.system("./driver " + str(i) + " 1 >> " + filename)
       t += readtemp(filename)
-      print str(i) + " cores: " + t
+      print str(i) + " cores: " + str(t)
     t = str(t/numtimes)
     objlist.append(t)
   os.chdir('..')
@@ -55,7 +55,7 @@ if __name__ == "__main__":
       os.system("rm " + filename)
       os.system("./newsolver " + str(i) + " 1 >> " + filename)
       t += readtemp(filename)
-      print str(i) + " cores: " + t
+      print str(i) + " cores: " + str(t)
     t = str(t/numtimes)
     newlist.append(t)
   os.chdir('..')
@@ -71,7 +71,7 @@ if __name__ == "__main__":
       os.system("rm " + filename)
       os.system("./llsolver "  + str(i) + " 1 >> " + filename)
       t += readtemp(filename)
-      print str(i) + " cores: " + t
+      print str(i) + " cores: " + str(t)
     t = str(t/numtimes)
     lllist.append(t)
   os.chdir('..')
@@ -87,7 +87,7 @@ if __name__ == "__main__":
       os.system("rm " + filename)
       os.system("./llsolver " + str(i) + " 1 >> " + filename)
       t += readtemp(filename)
-      print str(i) + " cores: " + t
+      print str(i) + " cores: " + str(t)
     t = str(t/numtimes)
     newlllist.append(t)
   os.chdir('..')
