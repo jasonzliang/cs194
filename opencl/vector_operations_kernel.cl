@@ -23,20 +23,10 @@ __kernel void scaleBy(__global float *vec1, __global const float *s) {
    vec1[i] *= s[0];
 }
 
-typedef struct element {
-  unsigned int index;
-  float value;
-  struct element *next;
-} element;
-
-__kernel void multiply(__global element *matrix, __global float *operandVec, __global float *resultVec) {
-  int i = get_global_id(0); // matrix row and vector element
-  element current = matrix[i];
-  float fnan = 0.0/0.0;
-  int inan = 0/0;
-
-  while ((current.index != inan) && (current.value != fnan)) {
-    resultVec[i] += current.value * operandVec[i];
-    current = *(current.next);
+__kernel void multiply(__global float *matrix, __global int *matrixRowIndexes, __global float *operandVec, __global float *resultVec, __global int *numRowElements, __global int *numElementsInRow) {
+  int i = get_global_id(0);
+  for (int j=0; j<numRowElements[0]; j++) {
+    int index = j + i * numElementsInRow[0];
+    resultVec[j] += matrix[index] * operandVec[matrixRowIndexes[index]];
   }
 }
