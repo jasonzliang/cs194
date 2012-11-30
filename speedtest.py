@@ -11,15 +11,16 @@ def readtemp(filename):
   return time
 
 if __name__ == "__main__":
-  numcores = int(sys.argv[1])
-  print "Numcores: " + str(numcores)
-  
-  legend = ['numcores']
-  i=1
-  while i <= numcores:
-    legend.append(str(i))
-    i *= 2
-    
+#  numcores = int(sys.argv[1])
+#  print "Numcores: " + str(numcores)
+#  
+#  legend = ['numcores']
+#  i=1
+#  while i <= numcores:
+#    legend.append(str(i))
+#    i *= 2
+  legend = [numcores, 1, 16]
+  numtimes = 5
   print legend
   
   objlist = []
@@ -31,11 +32,14 @@ if __name__ == "__main__":
   objlist.append('object-solver')
   os.chdir('cpp')
   for i in legend[1:]:
-    filename = i+'.txt'
-    i = int(i)
-    os.system("rm " + filename)
-    os.system("./driver " + str(i) + " 1 >> " + filename)
-    t = str(readtemp(filename))
+    t = 0
+    for j in xrange(numtimes):
+      filename = i+'.txt'
+      i = int(i)
+      os.system("rm " + filename)
+      os.system("./driver " + str(i) + " 1 >> " + filename)
+      t += readtemp(filename)
+    t = str(t/numtimes)
     objlist.append(t)
     print str(i) + " cores: " + t
   os.chdir('..')
@@ -44,11 +48,14 @@ if __name__ == "__main__":
   newlist.append('newsolver')
   os.chdir('newcpp')
   for i in legend[1:]:
-    filename = i+'.txt'
-    i = int(i)
-    os.system("rm " + filename)
-    os.system("./newsolver " + str(i) + " 1 >> " + filename)
-    t = str(readtemp(filename))
+    t = 0
+    for j in xrange(numtimes):
+      filename = i+'.txt'
+      i = int(i)
+      os.system("rm " + filename)
+      os.system("./newsolver " + str(i) + " 1 >> " + filename)
+      t += readtemp(filename)
+    t = str(t/numtimes)
     newlist.append(t)
     print str(i) + " cores: " + t
   os.chdir('..')
@@ -57,11 +64,14 @@ if __name__ == "__main__":
   lllist.append('llsolver')
   os.chdir('llcpp')
   for i in legend[1:]:
-    filename = i+'.txt'
-    i = int(i)
-    os.system("rm " + filename)
-    os.system("./llsolver "  + str(i) + " 1 >> " + filename)
-    t = str(readtemp(filename))
+    t = 0
+    for j in xrange(numtimes):
+      filename = i+'.txt'
+      i = int(i)
+      os.system("rm " + filename)
+      os.system("./llsolver "  + str(i) + " 1 >> " + filename)
+      t += readtemp(filename)
+    t = str(t/numtimes)
     lllist.append(t)
     print str(i) + " cores: " + t
   os.chdir('..')
@@ -70,11 +80,14 @@ if __name__ == "__main__":
   newlllist.append('opt-llsolver')
   os.chdir('llcpp-optimized')
   for i in legend[1:]:
-    filename = i+'.txt'
-    i = int(i)
-    os.system("rm " + filename)
-    os.system("./llsolver " + str(i) + " 1 >> " + filename)
-    t = str(readtemp(filename))
+    t = 0
+    for j in xrange(numtimes):
+      filename = i+'.txt'
+      i = int(i)
+      os.system("rm " + filename)
+      os.system("./llsolver " + str(i) + " 1 >> " + filename)
+      t += readtemp(filename)
+    t = str(t/numtimes)
     newlllist.append(t)
     print str(i) + " cores: " + t
   os.chdir('..')
