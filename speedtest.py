@@ -4,22 +4,27 @@ import os
 
 def readtemp(filename):
   f = open(filename, 'rb')
+  time = 0
   for line in f:
     if line.find("Time to solve:") != -1:
-      time = int(line[15:-4])
-      break;
+      time += int(line[15:-4])
+    if line.find("Time to write:") != -1:
+      time += int(line[15:-4])
+    if line.find("Time to read:") != -1:
+      time += int(line[14:-4])
   return time
 
 if __name__ == "__main__":
-  numcores = int(sys.argv[1])
-  print "Numcores: " + str(numcores)
-  
-  legend = ['numcores']
-  i=1
-  while i <= numcores:
-    legend.append(str(i))
-    i *= 2
-    
+#  numcores = int(sys.argv[1])
+#  print "Numcores: " + str(numcores)
+#  
+#  legend = ['numcores']
+#  i=1
+#  while i <= numcores:
+#    legend.append(str(i))
+#    i *= 2
+  legend = ['numcores', '1', '16']
+  numtimes = 5
   print legend
   
   objlist = []
@@ -31,52 +36,60 @@ if __name__ == "__main__":
   objlist.append('object-solver')
   os.chdir('cpp')
   for i in legend[1:]:
-    filename = i+'.txt'
-    i = int(i)
-    os.system("rm " + filename)
-    os.system("./driver " + str(i) + " 1 >> " + filename)
-    t = str(readtemp(filename))
+    t = 0
+    for j in xrange(numtimes):
+      filename = i +'.txt'
+      os.system("rm " + filename)
+      os.system("./driver " + i + " 1 >> " + filename)
+      t += readtemp(filename)
+      print i + " cores: " + str(t)
+    t = str(t/numtimes)
     objlist.append(t)
-    print str(i) + " cores: " + t
   os.chdir('..')
   
   print "Running Tests for newsolver (uses map): "
   newlist.append('newsolver')
   os.chdir('newcpp')
   for i in legend[1:]:
-    filename = i+'.txt'
-    i = int(i)
-    os.system("rm " + filename)
-    os.system("./newsolver " + str(i) + " 1 >> " + filename)
-    t = str(readtemp(filename))
+    t = 0
+    for j in xrange(numtimes):
+      filename = i+'.txt'
+      os.system("rm " + filename)
+      os.system("./newsolver " + i + " 1 >> " + filename)
+      t += readtemp(filename)
+      print i + " cores: " + str(t)
+    t = str(t/numtimes)
     newlist.append(t)
-    print str(i) + " cores: " + t
   os.chdir('..')
     
   print "Running Tests for llsolver with Linked Lists: "
   lllist.append('llsolver')
   os.chdir('llcpp')
   for i in legend[1:]:
-    filename = i+'.txt'
-    i = int(i)
-    os.system("rm " + filename)
-    os.system("./llsolver "  + str(i) + " 1 >> " + filename)
-    t = str(readtemp(filename))
+    t = 0
+    for j in xrange(numtimes):
+      filename = i+'.txt'
+      os.system("rm " + filename)
+      os.system("./llsolver "  + i + " 1 >> " + filename)
+      t += readtemp(filename)
+      print i + " cores: " + str(t)
+    t = str(t/numtimes)
     lllist.append(t)
-    print str(i) + " cores: " + t
   os.chdir('..')
   
   print "Running Tests for llsolver with Optimized Linked Lists: "
   newlllist.append('opt-llsolver')
   os.chdir('llcpp-optimized')
   for i in legend[1:]:
-    filename = i+'.txt'
-    i = int(i)
-    os.system("rm " + filename)
-    os.system("./llsolver " + str(i) + " 1 >> " + filename)
-    t = str(readtemp(filename))
+    t = 0
+    for j in xrange(numtimes):
+      filename = i+'.txt'
+      os.system("rm " + filename)
+      os.system("./llsolver " + i + " 1 >> " + filename)
+      t += readtemp(filename)
+      print i + " cores: " + str(t)
+    t = str(t/numtimes)
     newlllist.append(t)
-    print str(i) + " cores: " + t
   os.chdir('..')
   
   with open('speedtest.csv', 'wb') as csvfile:
