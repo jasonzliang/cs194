@@ -25,8 +25,10 @@ __kernel void scaleBy(__global float *vec1, __global const float *s) {
 
 __kernel void multiply(__global float *matrix, __global int *matrixRowIndexes, __global float *operandVec, __global float *resultVec, __global int *numRowElements, __global int *numElementsInRow) {
   int i = get_global_id(0);
-  for (int j=0; j<numRowElements[0]; j++) {
+  for (int j=0; j<numRowElements[i]; j++) {
     int index = j + i * numElementsInRow[0];
-    resultVec[j] += matrix[index] * operandVec[matrixRowIndexes[index]];
+    resultVec[i] += (float)numElementsInRow[0];//matrix[index] * operandVec[matrixRowIndexes[index]];
+    resultVec[i] = 10.0;
   }
+  resultVec[i] = numRowElements[i];
 }

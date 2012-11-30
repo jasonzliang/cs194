@@ -114,13 +114,13 @@ int main(int argc, char **argv) {
   kernel_file = "vector_operations_kernel.cl";
 
   int *size = new int[1];
-  float *v = readVectorFromMatrixMarketFile("../vector.txt.mtx", size);
+  float *v = readVectorFromMatrixMarketFile("../test_vector.mtx", size);
   int vSize = size[0];
   free(size);
   std::cout << "Done reading the vector\n";
 
   size = new int[1];
-  element *m = readMatrixFromMatrixMarketFile("../matrix.txt.mtx", size);
+  element *m = readMatrixFromMatrixMarketFile("../test_matrix.mtx", size);
   int mSize = size[0];
   free(size);
   int *matrixRowCount = new int[mSize];
@@ -151,41 +151,7 @@ int main(int argc, char **argv) {
       current = *(current.next);
     }
   }
-  // create the ragged array for the matrix
-  /*
-  float **matrix = new float*[mSize];
-  int **matrixIndexes = new int*[mSize];
-  for (int row=0; row<mSize; row++) {
-    element current = m[row];
-    int count = 0;
-    while ((current.index != inan) && (current.value != fnan)) {
-      count++;
-      current = *(current.next);
-    }
-    matrixRowCount[row] = count;
-    if (count > maxCount) {
-      maxCount = count;
-    }
-    matrix[row] = new float[count];
-    matrixIndexes[row] = new int[count];
-    current = m[row];
-    count = 0;
-    while ((current.index != inan) && (current.value != fnan)) {
-      matrix[row][count] = current.value;
-      matrixIndexes[row][count] = current.index;
-      count++;
-      current = *(current.next);
-    }
-  }
-  */
   std::cout << "Done reading the matrix (largest row has " << maxCount << " elements)\n";
-  /*
-  for (int row=0; row<4; row++) {
-    for (int count=0; count<matrixRowCount[row]; count++) {
-      std::cout << "[" << row << "," << matrixIndexes[row][count] << "]: " << matrix[row][count] << std::endl;
-    }
-  }
-  */
 
   // create a zero vector to use for initialization
   float *zero = new float[vSize];
@@ -260,31 +226,48 @@ int main(int argc, char **argv) {
     NDRange local(1);
 
 
-    // Make kernel
-    Kernel kernel1(program, "vector_add");
-    kernel1.setArg(0, bufferA);
-    kernel1.setArg(1, bufferB);
-    kernel1.setArg(2, bufferC);
-    queue.enqueueNDRangeKernel(kernel1, NullRange, global, local);
 
-    // now subtract
-     Kernel kernel2(program, "vector_sub");
-    kernel2.setArg(0, bufferC);
+    // SOLVER STUFF
+
+    /*
+	multiply(A, b, r);
+	increaseBy(r, b);
+	multiply(r, -1.0, y);
+	multiply(A, y, z);
+	s = dotProduct(y, z);
+	t = dotProduct(r, y) / s;
+	multiply(y, t, x);
+	reduceBy(x, b);
+    */
+    // pre-iteration stuff
+    
+    // 
+    Kernel kernel01(program, "multiply");
+    kernel01.setArg(0, bufferMatrix);
+    kernel01.setArg(1, bufferMatrixIndexes);
+    kernel01.setArg(2, bufferB);
+    kernel01.setArg(3, bufferR);
+    kernel01.setArg(4, bufferRowCounts);
+    kernel01.setArg(5, bufferMatrixMaxRowCount);
+    queue.enqueueNDRangeKernel(kernel01, NullRange, global, local);
+
+
+    /*
+    Kernel kernel2(program, "vector_add");
+    kernel2.setArg(0, bufferB);
     kernel2.setArg(1, bufferB);
-    kernel2.setArg(2, bufferC);
+    kernel2.setArg(2, bufferR);
     queue.enqueueNDRangeKernel(kernel2, NullRange, global, local);
-
+    */
 
 
  
     // Read buffer C into a local list
     float *C = new float[vSize];
-    queue.enqueueReadBuffer(bufferC, CL_TRUE, 0, vSize * sizeof(float), C);
+    queue.enqueueReadBuffer(bufferR, CL_TRUE, 0, vSize * sizeof(float), C);
  
-    for(int i = 0; i < 10; i ++)
+    for(int i = 1; i < 4; i ++)
       std::cout << v[i] << " ~= " << C[i] << std::endl; 
-    */
-
 
     free(v);
     free(matrix);
