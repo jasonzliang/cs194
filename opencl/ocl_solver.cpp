@@ -10,6 +10,9 @@
 #include <ctime>
 using namespace cl;
 
+float fnan = 0.0/0.0;
+int inan = -1;
+
 float *readVectorFromMatrixMarketFile(string fileName, int *size) {
   unsigned int row, col, maxSize = 0;
   float val;
@@ -31,7 +34,7 @@ float *readVectorFromMatrixMarketFile(string fileName, int *size) {
 	maxSize = col + 1;
 	std::cout << "Vector size: " << maxSize << std::endl;
 	values = new float[maxSize];
-	values[0] = 0.0/0.0;
+	values[0] = fnan;
 	size[0] = maxSize;
 	continue;
       }
@@ -56,10 +59,55 @@ float norm(float *vec1, float *vec2, int vSize) {
 }
 
 typedef struct element {
-  unsigned int index;
+  int index;
   float value;
   struct element *next;
 } element;
+
+element *readMatrixFromMatrixMarketFile(string fileName, int *size) {
+  unsigned int row, col, maxSize = 0;
+  float val;
+  element *values;
+  std::string line;
+
+  std::ifstream mmFile(fileName.c_str());
+
+  if (mmFile.is_open()) {
+    while (mmFile.good()) {
+      getline(mmFile, line);
+
+      if (line[0] == '%') {
+	continue;
+      }
+      std::stringstream lineStream(line);
+      lineStream >> row >> col  >> val;
+      if (maxSize == 0) {
+	maxSize = col + 1;
+	std::cout << "Matrix Size: " << maxSize << std::endl;
+	values = new element[maxSize];
+	for (unsigned int i=0 ; i<maxSize; i++) {
+	  values[i].index = inan;
+	  values[i].value = fnan;
+	  values[i].next = NULL;
+	}
+	size[0] = maxSize;
+	continue;
+      }
+      element *current = &values[row];
+      while ((current->index != inan) && (current->value != fnan)) {
+	current = current->next;
+      }
+      current->index = col;
+      current->value = val;
+      current->next = new element;
+      (current->next)->index = inan;
+      (current->next)->value = fnan;
+      (current->next)->next = NULL;
+    }
+    mmFile.close();
+  }
+  return values;
+}
 
 int main(int argc, char **argv) {
   char *kernel_file = new char[0];
@@ -74,6 +122,19 @@ int main(int argc, char **argv) {
   for (int i=0; i<vSize; i++) {
     v[i] = i/7.0;
   }
+  int *size = new int[1];
+  element *m = readMatrixFromMatrixMarketFile("../matrix.txt.mtx", size);
+  int mSize = size[0];
+  free(size);
+  std::cout << "Done reading the matrix\n";
+  //for (int row=0; row<4; row++) {
+  //  element current = m[row];
+  //  while ((current.index != inan) && (current.value != fnan)) {
+  //    std::cout << "[" << row << "," << current.index << "]: " << current.value << std::endl;
+  //    current = *(current.next);
+  //  }
+  //}
+
 
   try { 
     // Get available platforms

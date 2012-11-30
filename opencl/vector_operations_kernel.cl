@@ -29,11 +29,14 @@ typedef struct element {
   struct element *next;
 } element;
 
-__kernel void createList(__global element *elements, __global float *values, __global int *numValues) {
-  unsigned int i = get_global_id(0);
-  
-}
+__kernel void multiply(__global element *matrix, __global float *operandVec, __global float *resultVec) {
+  int i = get_global_id(0); // matrix row and vector element
+  element current = matrix[i];
+  float fnan = 0.0/0.0;
+  int inan = 0/0;
 
-__kernel void multiply(__global element *matrixRow, __global float *operandVec, __global float *resultVec) {
-  
+  while ((current.index != inan) && (current.value != fnan)) {
+    resultVec[i] += current.value * operandVec[i];
+    current = *(current.next);
+  }
 }
