@@ -54,8 +54,8 @@ float dotProduct(float *vec1, float *vec2, int vSize) {
   return temp;
 }
 
-float norm(float *vec1, float *vec2, int vSize) {
-  return sqrt(dotProduct(vec1, vec2, vSize));
+float norm(float *vec, int vSize) {
+  return sqrt(dotProduct(vec, vec, vSize));
 }
 
 typedef struct element {
@@ -205,6 +205,7 @@ int main(int argc, char **argv) {
     Buffer bufferY = Buffer(context, CL_MEM_READ_WRITE, vSize * sizeof(float));
     Buffer bufferZ = Buffer(context, CL_MEM_READ_WRITE, vSize * sizeof(float));
     Buffer bufferTemp = Buffer(context, CL_MEM_READ_WRITE, vSize * sizeof(float));
+    Buffer bufferTempSingleFloat = Buffer(context, CL_MEM_READ_WRITE, sizeof(float));
  
     // Copy data into buffers
     std::cout << "Populating matrix buffers\n";
@@ -228,20 +229,16 @@ int main(int argc, char **argv) {
 
 
     // SOLVER STUFF
+    float tolerance = 1e-6;
 
-    /*
-	multiply(A, b, r);
-	increaseBy(r, b);
-	multiply(r, -1.0, y);
-	multiply(A, y, z);
-	s = dotProduct(y, z);
-	t = dotProduct(r, y) / s;
-	multiply(y, t, x);
-	reduceBy(x, b);
-    */
     // pre-iteration stuff
+    float *s = new float[1];
+    float *t = new float[1];
+    float *temp = new float[1];
+    float *result1 = new float[vSize];
+    float *result2 = new float[vSize];
     
-    // 
+    // multiply(A, b, r);
     Kernel kernel01(program, "multiply");
     kernel01.setArg(0, bufferMatrix);
     kernel01.setArg(1, bufferMatrixIndexes);
@@ -251,20 +248,128 @@ int main(int argc, char **argv) {
     kernel01.setArg(5, bufferMatrixMaxRowCount);
     queue.enqueueNDRangeKernel(kernel01, NullRange, global, local);
 
+    // increaseBy(r, b);
+    Kernel kernel02(program, "increaseBy");
+    kernel02.setArg(0, bufferR);
+    kernel02.setArg(1, bufferB);
+    queue.enqueueNDRangeKernel(kernel02, NullRange, global, local);
 
-    /*
-    Kernel kernel2(program, "vector_add");
-    kernel2.setArg(0, bufferB);
-    kernel2.setArg(1, bufferB);
-    kernel2.setArg(2, bufferR);
-    queue.enqueueNDRangeKernel(kernel2, NullRange, global, local);
-    */
+    // multiply(r, -1.0, y);
+    Kernel kernel03(program, "vector_mult");
+    temp[0] = -1.0;
+    queue.enqueueWriteBuffer(bufferTempSingleFloat, CL_TRUE, 0, sizeof(float), temp);
+    kernel03.setArg(0, bufferR);
+    kernel03.setArg(1, bufferTempSingleFloat);
+    kernel03.setArg(2, bufferY);
+    queue.enqueueNDRangeKernel(kernel03, NullRange, global, local);
 
+    // multiply(A, y, z);
+    Kernel kernel04(program, "multiply");
+    kernel04.setArg(0, bufferMatrix);
+    kernel04.setArg(1, bufferMatrixIndexes);
+    kernel04.setArg(2, bufferY);
+    kernel04.setArg(3, bufferZ);
+    kernel04.setArg(4, bufferRowCounts);
+    kernel04.setArg(5, bufferMatrixMaxRowCount);
+    queue.enqueueNDRangeKernel(kernel04, NullRange, global, local);
 
+    // s = dotProduct(y, z);
+    queue.enqueueReadBuffer(bufferY, CL_TRUE, 0, vSize * sizeof(float), result1);
+    queue.enqueueReadBuffer(bufferZ, CL_TRUE, 0, vSize * sizeof(float), result2);
+    s[0] = dotProduct(result1, result2, vSize);
+
+    // t = dotProduct(r, y) / s;
+    queue.enqueueReadBuffer(bufferR, CL_TRUE, 0, vSize * sizeof(float), result2);
+    t[0] = dotProduct(result1, result2, vSize) / s[0];
+
+    // multiply(y, t, x);
+    Kernel kernel05(program, "vector_mult");
+    queue.enqueueWriteBuffer(bufferTempSingleFloat, CL_TRUE, 0, sizeof(float), t);
+    kernel05.setArg(0, bufferY);
+    kernel05.setArg(1, bufferTempSingleFloat);
+    kernel05.setArg(2, bufferX);
+    queue.enqueueNDRangeKernel(kernel05, NullRange, global, local);
+
+    // reduceBy(x, b);
+    Kernel kernel06(program, "reduceBy");
+    kernel06.setArg(0, bufferX);
+    kernel06.setArg(1, bufferB);
+    queue.enqueueNDRangeKernel(kernel06, NullRange, global, local);
+
+    for (unsigned int k=0; k<vSize; k++) {
+      // multiply(z, t, temp);
+      Kernel kernelL1(program, "vector_mult");
+      queue.enqueueWriteBuffer(bufferTempSingleFloat, CL_TRUE, 0, sizeof(float), t);
+      kernelL1.setArg(0, bufferZ);
+      kernelL1.setArg(1, bufferTempSingleFloat);
+      kernelL1.setArg(2, bufferTemp);
+      queue.enqueueNDRangeKernel(kernelL1, NullRange, global, local);
+
+      // reduceBy(r, temp);
+      Kernel kernelL2(program, "reduceBy");
+      kernelL2.setArg(0, bufferR);
+      kernelL2.setArg(1, bufferTemp);
+      queue.enqueueNDRangeKernel(kernelL2, NullRange, global, local);
+
+      // if (norm(r) < tolerance) { break; }
+      queue.enqueueReadBuffer(bufferR, CL_TRUE, 0, vSize * sizeof(float), result1);
+      if (norm(result1, vSize) < tolerance) { break; }
+
+      // double B = dotProduct(r, z) / s;
+      queue.enqueueReadBuffer(bufferZ, CL_TRUE, 0, vSize * sizeof(float), result2);
+      temp[0] = dotProduct(result1, result2, vSize);
+
+      // scaleBy(y, B);
+      Kernel kernelL3(program, "scaleBy");
+      queue.enqueueWriteBuffer(bufferTempSingleFloat, CL_TRUE, 0, sizeof(float), temp);
+      kernelL3.setArg(0, bufferY);
+      kernelL3.setArg(1, bufferTempSingleFloat);
+      queue.enqueueNDRangeKernel(kernelL3, NullRange, global, local);
+
+      // reduceBy(y, r);
+      Kernel kernelL4(program, "reduceBy");
+      kernelL4.setArg(0, bufferY);
+      kernelL4.setArg(1, bufferR);
+      queue.enqueueNDRangeKernel(kernelL4, NullRange, global, local);
+
+      // multiply(A, y, z);
+      Kernel kernelL5(program, "multiply");
+      kernelL5.setArg(0, bufferMatrix);
+      kernelL5.setArg(1, bufferMatrixIndexes);
+      kernelL5.setArg(2, bufferY);
+      kernelL5.setArg(3, bufferZ);
+      kernelL5.setArg(4, bufferRowCounts);
+      kernelL5.setArg(5, bufferMatrixMaxRowCount);
+      queue.enqueueNDRangeKernel(kernelL5, NullRange, global, local);
+
+      // s = dotProduct(y, z);
+      queue.enqueueReadBuffer(bufferY, CL_TRUE, 0, vSize * sizeof(float), result1);
+      queue.enqueueReadBuffer(bufferZ, CL_TRUE, 0, vSize * sizeof(float), result2);
+      s[0] = dotProduct(result1, result2, vSize);
+
+      // t = dotProduct(r, y) / s;
+      queue.enqueueReadBuffer(bufferR, CL_TRUE, 0, vSize * sizeof(float), result2);
+      t[0] = dotProduct(result1, result2, vSize) / s[0];
+
+      // multiply(y, t, temp);
+      Kernel kernelL6(program, "vector_mult");
+      queue.enqueueWriteBuffer(bufferTempSingleFloat, CL_TRUE, 0, sizeof(float), t);
+      kernelL6.setArg(0, bufferY);
+      kernelL6.setArg(1, bufferTempSingleFloat);
+      kernelL6.setArg(2, bufferTemp);
+      queue.enqueueNDRangeKernel(kernelL6, NullRange, global, local);
+
+      // increaseBy(x, temp);
+      Kernel kernelL7(program, "increaseBy");
+      kernelL7.setArg(0, bufferX);
+      kernelL7.setArg(1, bufferTemp);
+      queue.enqueueNDRangeKernel(kernelL7, NullRange, global, local);
+
+    }
  
     // Read buffer C into a local list
     float *C = new float[vSize];
-    queue.enqueueReadBuffer(bufferR, CL_TRUE, 0, vSize * sizeof(float), C);
+    queue.enqueueReadBuffer(bufferX, CL_TRUE, 0, vSize * sizeof(float), C);
  
     for(int i = 1; i < 4; i ++)
       std::cout << v[i] << " ~= " << C[i] << std::endl; 

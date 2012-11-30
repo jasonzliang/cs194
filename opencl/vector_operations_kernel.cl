@@ -8,6 +8,11 @@ __kernel void vector_sub(__global float *A, __global float *B, __global float *C
     C[i] = A[i] - B[i];
 }
 
+__kernel void vector_mult(__global float *vec, __global float *s, __global float *result) {
+    int i = get_global_id(0);
+    result[i] = vec[i] * s[0];
+}
+
 __kernel void increaseBy(__global float *vec1, __global const float *vec2) {
    int i = get_global_id(0);
    vec1[i] += vec2[i];
@@ -27,8 +32,6 @@ __kernel void multiply(__global float *matrix, __global int *matrixRowIndexes, _
   int i = get_global_id(0);
   for (int j=0; j<numRowElements[i]; j++) {
     int index = j + i * numElementsInRow[0];
-    resultVec[i] += (float)numElementsInRow[0];//matrix[index] * operandVec[matrixRowIndexes[index]];
-    resultVec[i] = 10.0;
+    resultVec[i] += matrix[index] * operandVec[matrixRowIndexes[index]];
   }
-  resultVec[i] = numRowElements[i];
 }
