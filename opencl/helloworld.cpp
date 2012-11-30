@@ -17,7 +17,7 @@ using namespace cl;
 // http://developer.amd.com/tools/heterogeneous-computing/amd-accelerated-parallel-processing-app-sdk/introductory-tutorial-to-opencl/
 int main(int argc, char **argv) {
   std::string kernel_str = 
-    "__constant char hw[] = \"Hello WOrld\\n\""
+    "__constant char hw[] = \"Hello WOrld\\n\";"
     "__kernel void hello(__global char* out){"
     "unsigned int tid = get_global_id(0);"
     "out[tid] = hw[tid];"
