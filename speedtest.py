@@ -34,12 +34,11 @@ if __name__ == "__main__":
   for i in legend[1:]:
     t = 0
     for j in xrange(numtimes):
-      filename = i+'.txt'
-      i = int(i)
+      filename = i +'.txt'
       os.system("rm " + filename)
-      os.system("./driver " + str(i) + " 1 >> " + filename)
+      os.system("./driver " + i + " 1 >> " + filename)
       t += readtemp(filename)
-      print str(i) + " cores: " + str(t)
+      print i + " cores: " + str(t)
     t = str(t/numtimes)
     objlist.append(t)
   os.chdir('..')
@@ -51,11 +50,10 @@ if __name__ == "__main__":
     t = 0
     for j in xrange(numtimes):
       filename = i+'.txt'
-      i = int(i)
       os.system("rm " + filename)
-      os.system("./newsolver " + str(i) + " 1 >> " + filename)
+      os.system("./newsolver " + i + " 1 >> " + filename)
       t += readtemp(filename)
-      print str(i) + " cores: " + str(t)
+      print i + " cores: " + str(t)
     t = str(t/numtimes)
     newlist.append(t)
   os.chdir('..')
@@ -67,11 +65,10 @@ if __name__ == "__main__":
     t = 0
     for j in xrange(numtimes):
       filename = i+'.txt'
-      i = int(i)
       os.system("rm " + filename)
-      os.system("./llsolver "  + str(i) + " 1 >> " + filename)
+      os.system("./llsolver "  + i + " 1 >> " + filename)
       t += readtemp(filename)
-      print str(i) + " cores: " + str(t)
+      print i + " cores: " + str(t)
     t = str(t/numtimes)
     lllist.append(t)
   os.chdir('..')
@@ -83,11 +80,10 @@ if __name__ == "__main__":
     t = 0
     for j in xrange(numtimes):
       filename = i+'.txt'
-      i = int(i)
       os.system("rm " + filename)
-      os.system("./llsolver " + str(i) + " 1 >> " + filename)
+      os.system("./llsolver " + i + " 1 >> " + filename)
       t += readtemp(filename)
-      print str(i) + " cores: " + str(t)
+      print i + " cores: " + str(t)
     t = str(t/numtimes)
     newlllist.append(t)
   os.chdir('..')
