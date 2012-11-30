@@ -13,8 +13,11 @@
 */CMakeFiles
 */CMakeFiles/*
 */CMakeCache.txt
-*/Makefile
 */cmake_install.cmake
+cpp/Makefile
+llcpp/Makefile
+llcpp-optimized/Makefile
+newcpp/Makefile
 
 # executables should not be checked in
 cpp/solver
