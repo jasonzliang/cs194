@@ -47,8 +47,8 @@ float *readVectorFromMatrixMarketFile(string fileName, int *size) {
 
 
 float dotProduct(float *vec1, float *vec2, int vSize) {
-  double temp = 0.0;
-  for (unsigned int i=0; i<vSize; i++) {
+  float temp = 0.0;
+  for (unsigned int i=1; i<vSize; i++) {
     temp += vec1[i] * vec2[i];
   }
   return temp;
@@ -114,13 +114,13 @@ int main(int argc, char **argv) {
   kernel_file = "vector_operations_kernel.cl";
 
   int *size = new int[1];
-  float *v = readVectorFromMatrixMarketFile("../test_vector.mtx", size);
+  float *v = readVectorFromMatrixMarketFile("../vector.txt.mtx", size);
   int vSize = size[0];
   free(size);
   std::cout << "Done reading the vector\n";
 
   size = new int[1];
-  element *m = readMatrixFromMatrixMarketFile("../test_matrix.mtx", size);
+  element *m = readMatrixFromMatrixMarketFile("../matrix.txt.mtx", size);
   int mSize = size[0];
   free(size);
   int *matrixRowCount = new int[mSize];
@@ -141,6 +141,10 @@ int main(int argc, char **argv) {
   matrixMaxRowCount[0] = maxCount;
   float *matrix = new float[mSize * maxCount];
   int *matrixIndexes = new int[mSize * maxCount];
+  for (int i=0; i<mSize * maxCount; i++) {
+    matrix[i] = 0.0;
+    matrixIndexes[i] = -1;
+  }
   for (int row=1; row<mSize; row++) {
     element current = m[row];
     int count = row * maxCount;
@@ -285,7 +289,7 @@ int main(int argc, char **argv) {
 
     // t = dotProduct(r, y) / s;
     queue.enqueueReadBuffer(bufferR, CL_TRUE, 0, vSize * sizeof(float), result2);
-    t[0] = dotProduct(result1, result2, vSize) / s[0];
+    t[0] = dotProduct(result2, result1, vSize) / s[0];
 
     // multiply(y, t, x);
     Kernel kernel05(program, "vector_mult");
@@ -301,7 +305,7 @@ int main(int argc, char **argv) {
     kernel06.setArg(1, bufferB);
     queue.enqueueNDRangeKernel(kernel06, NullRange, global, local);
 
-    unsigned int maxIters = 100;//vSize
+    unsigned int maxIters = vSize;
     for (unsigned int k=0; k<maxIters; k++) {
       // multiply(z, t, temp);
       Kernel kernelL1(program, "vector_mult");
@@ -320,7 +324,7 @@ int main(int argc, char **argv) {
       // if (norm(r) < tolerance) { break; }
       queue.enqueueReadBuffer(bufferR, CL_TRUE, 0, vSize * sizeof(float), result1);
       float res = norm(result1, vSize);
-      std::cout << "Residual (" << k << "/" << vSize << "): " << res << std::endl;
+      std::cout << "Residual (" << k << "/" << maxIters << "): " << res << std::endl;
       if (res < tolerance) { break; }
 
       // double B = dotProduct(r, z) / s;
@@ -349,6 +353,7 @@ int main(int argc, char **argv) {
       kernelL5.setArg(4, bufferRowCounts);
       kernelL5.setArg(5, bufferMatrixMaxRowCount);
       queue.enqueueNDRangeKernel(kernelL5, NullRange, global, local);
+      queue.enqueueReadBuffer(bufferY, CL_TRUE, 0, vSize * sizeof(float), result1);
 
       // s = dotProduct(y, z);
       queue.enqueueReadBuffer(bufferY, CL_TRUE, 0, vSize * sizeof(float), result1);
@@ -357,7 +362,7 @@ int main(int argc, char **argv) {
 
       // t = dotProduct(r, y) / s;
       queue.enqueueReadBuffer(bufferR, CL_TRUE, 0, vSize * sizeof(float), result2);
-      t[0] = dotProduct(result1, result2, vSize) / s[0];
+      t[0] = dotProduct(result2, result1, vSize) / s[0];
 
       // multiply(y, t, temp);
       Kernel kernelL6(program, "vector_mult");
@@ -378,7 +383,8 @@ int main(int argc, char **argv) {
     float *C = new float[vSize];
     queue.enqueueReadBuffer(bufferX, CL_TRUE, 0, vSize * sizeof(float), C);
  
-    for(int i = 1; i < 4; i ++)
+    std::cout << std::endl;
+    for(int i = 1; i < 10; i ++)
       std::cout << v[i] << " ~= " << C[i] << std::endl; 
 
     free(v);
